@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Modal from './Modal';
+import { Modal } from './Modal';
 import { supabase } from '@/app/lib/supabase';
 import type { AreaOfLife } from '@/app/lib/types';
 import { Pencil } from 'lucide-react';
