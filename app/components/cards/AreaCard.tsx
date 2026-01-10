@@ -155,17 +155,12 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, isInDragCo
       {/* Goals Section */}
       {goals.length > 0 && (
         <div className="mb-8 space-y-2">
-          {goals.slice(0, 2).map((goal, index) => (
+          {goals.slice(0, 3).map((goal, index) => (
             <div key={index} className="flex items-start gap-2 text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
               <Target size={14} className="mt-0.5 flex-shrink-0" style={{ color: area.color }} />
               <span className="line-clamp-1 font-light">{goal}</span>
             </div>
           ))}
-          {goals.length > 2 && (
-            <div className="text-sm font-light" style={{ color: 'var(--color-text-tertiary)' }}>
-              +{goals.length - 2} more goal{goals.length - 2 > 1 ? 's' : ''}
-            </div>
-          )}
         </div>
       )}
 

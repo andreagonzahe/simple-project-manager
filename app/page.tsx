@@ -13,6 +13,7 @@ import { AddDomainModalStandalone } from './components/modals/AddDomainModalStan
 import { AddTaskModalStandalone } from './components/modals/AddTaskModalStandalone';
 import { EditTodaysFocusModal } from './components/modals/EditTodaysFocusModal';
 import { EditGoalsModal } from './components/modals/EditGoalsModal';
+import { EditAreaGoalsModal } from './components/modals/EditAreaGoalsModal';
 import { EmptyState } from './components/ui/EmptyState';
 import { ToastContainer, useToast } from './components/ui/Toast';
 import { DeleteConfirmModal } from './components/modals/DeleteConfirmModal';
@@ -554,15 +555,15 @@ export default function HomePage() {
         currentFocus={todaysFocus}
       />
 
-      <EditGoalsModal
+      <EditAreaGoalsModal
         isOpen={isEditAreaGoalsModalOpen}
         onClose={() => {
           setIsEditAreaGoalsModalOpen(false);
           setSelectedArea(null);
         }}
         onSuccess={handleAreaGoalsSuccess}
-        domainId={selectedArea?.id || ''}
-        domainName={selectedArea?.name || ''}
+        areaId={selectedArea?.id || ''}
+        areaName={selectedArea?.name || ''}
         currentGoals={selectedArea?.goals || []}
       />
 
