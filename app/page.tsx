@@ -170,6 +170,43 @@ export default function HomePage() {
     }
   };
 
+  const refreshTodaysFocus = async () => {
+    try {
+      const saved = localStorage.getItem('todaysFocus');
+      if (!saved) return;
+
+      const currentFocus: FocusItem[] = JSON.parse(saved);
+      const areaIds = currentFocus.map(item => item.areaId);
+
+      // Fetch fresh data from database
+      const { data: freshAreas, error } = await supabase
+        .from('areas_of_life')
+        .select('id, name, color, icon')
+        .in('id', areaIds);
+
+      if (!error && freshAreas) {
+        // Update focus items with fresh data while maintaining order
+        const updatedFocus = currentFocus.map(item => {
+          const freshArea = freshAreas.find(a => a.id === item.areaId);
+          if (freshArea) {
+            return {
+              ...item,
+              areaName: freshArea.name,
+              areaColor: freshArea.color,
+              areaIcon: freshArea.icon || '',
+            };
+          }
+          return item;
+        });
+
+        setTodaysFocus(updatedFocus);
+        localStorage.setItem('todaysFocus', JSON.stringify(updatedFocus));
+      }
+    } catch (error) {
+      console.error('Error refreshing today\'s focus:', error);
+    }
+  };
+
   const handleAddSuccess = async () => {
     showToast('Area created successfully!', 'success');
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -226,8 +263,6 @@ export default function HomePage() {
     showToast('Area updated successfully!', 'success');
     await new Promise(resolve => setTimeout(resolve, 500));
     await fetchAreas();
-    // Refresh Today's Focus to show updated area names/colors/icons
-    await refreshTodaysFocus();
   };
 
   const handleAreaGoalsSuccess = async () => {
