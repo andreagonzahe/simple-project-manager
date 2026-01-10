@@ -8,6 +8,7 @@ import { Breadcrumb } from '@/app/components/ui/Breadcrumb';
 import { ToastContainer, useToast } from '@/app/components/ui/Toast';
 import { ThemeToggle } from '@/app/components/ui/ThemeToggle';
 import { EditGoalsModal } from '@/app/components/modals/EditGoalsModal';
+import { AddTaskModalStandalone } from '@/app/components/modals/AddTaskModalStandalone';
 import { motion } from 'framer-motion';
 
 interface Domain {
@@ -34,6 +35,7 @@ export default function DomainDetailPage() {
   const [domain, setDomain] = useState<Domain | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const { toasts, showToast, removeToast } = useToast();
 
   const fetchData = async () => {
@@ -78,6 +80,11 @@ export default function DomainDetailPage() {
     showToast('Goals updated successfully!', 'success');
     await new Promise(resolve => setTimeout(resolve, 300));
     await fetchData();
+  };
+
+  const handleTaskSuccess = async () => {
+    showToast('Task created successfully!', 'success');
+    // In the future, refresh task list here
   };
 
   if (isLoading) {
@@ -252,6 +259,7 @@ export default function DomainDetailPage() {
               Create your first task to start tracking work in this project.
             </p>
             <button
+              onClick={() => setIsAddTaskModalOpen(true)}
               className="px-6 py-3 rounded-2xl transition-all font-medium inline-flex items-center gap-2"
               style={{
                 background: 'linear-gradient(135deg, rgba(123, 159, 255, 0.8), rgba(155, 110, 255, 0.8))',
@@ -273,6 +281,15 @@ export default function DomainDetailPage() {
         domainId={domainId}
         domainName={domain.name}
         currentGoals={domain.goals}
+      />
+
+      {/* Add Task Modal */}
+      <AddTaskModalStandalone
+        isOpen={isAddTaskModalOpen}
+        onClose={() => setIsAddTaskModalOpen(false)}
+        onSuccess={handleTaskSuccess}
+        preselectedAreaId={areaId}
+        preselectedDomainId={domainId}
       />
     </div>
   );

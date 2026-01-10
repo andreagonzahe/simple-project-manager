@@ -9,14 +9,16 @@ interface AddTaskModalStandaloneProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  preselectedAreaId?: string;
+  preselectedDomainId?: string;
 }
 
-export function AddTaskModalStandalone({ isOpen, onClose, onSuccess }: AddTaskModalStandaloneProps) {
+export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselectedAreaId, preselectedDomainId }: AddTaskModalStandaloneProps) {
   const [areas, setAreas] = useState<AreaOfLife[]>([]);
   const [domains, setDomains] = useState<Domain[]>([]);
   
-  const [selectedAreaId, setSelectedAreaId] = useState('');
-  const [selectedDomainId, setSelectedDomainId] = useState('');
+  const [selectedAreaId, setSelectedAreaId] = useState(preselectedAreaId || '');
+  const [selectedDomainId, setSelectedDomainId] = useState(preselectedDomainId || '');
   
   const [formData, setFormData] = useState({
     type: 'task' as 'task' | 'bug' | 'feature',
@@ -36,8 +38,15 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess }: AddTaskMo
   useEffect(() => {
     if (isOpen) {
       fetchAreas();
+      // Set preselected values if provided
+      if (preselectedAreaId) {
+        setSelectedAreaId(preselectedAreaId);
+      }
+      if (preselectedDomainId) {
+        setSelectedDomainId(preselectedDomainId);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, preselectedAreaId, preselectedDomainId]);
 
   // Fetch domains when area changes
   useEffect(() => {
