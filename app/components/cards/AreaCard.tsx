@@ -184,22 +184,13 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
         </div>
       )}
 
-      {/* Status */}
+      {/* Status - Removed fake blocked items count */}
       {area.totalItems > 0 && (
-        <div className="text-base font-light mb-12 flex items-center gap-4" style={{ color: 'var(--color-text-tertiary)' }}>
-          <span className="flex items-center gap-2" style={{ color: 'var(--color-text-secondary)' }}>
+        <div className="text-base font-light mb-12" style={{ color: 'var(--color-text-secondary)' }}>
+          <span className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full animate-pulse-glow" style={{ background: area.color }}></span>
-            {activeItems} active
+            {area.totalItems} {area.totalItems === 1 ? 'item' : 'items'} total
           </span>
-          {blockedItems > 0 && (
-            <>
-              <span className="text-xs">•</span>
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-400/50"></span>
-                {blockedItems} blocked
-              </span>
-            </>
-          )}
         </div>
       )}
 
