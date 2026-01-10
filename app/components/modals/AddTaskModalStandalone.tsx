@@ -81,8 +81,8 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess }: AddTaskMo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedDomainId) {
-      setError('Please select a domain and project');
+    if (!selectedAreaId) {
+      setError('Please select an area');
       return;
     }
 
@@ -91,7 +91,8 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess }: AddTaskMo
 
     try {
       const baseData = {
-        domain_id: selectedDomainId,
+        domain_id: selectedDomainId || null,
+        area_id: selectedAreaId,
         title: formData.title,
         description: formData.description || null,
         priority: formData.priority,
@@ -216,22 +217,24 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess }: AddTaskMo
         {selectedAreaId && (
           <div>
             <label htmlFor="domain" className="block text-sm font-medium mb-3 text-white">
-              Project *
+              Project (Optional)
             </label>
             <select
               id="domain"
               value={selectedDomainId}
               onChange={(e) => setSelectedDomainId(e.target.value)}
               className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             >
-              <option value="">Select a project</option>
+              <option value="">No project (area only)</option>
               {domains.map((domain) => (
                 <option key={domain.id} value={domain.id} className="bg-gray-800">
                   {domain.name}
                 </option>
               ))}
             </select>
+            <p className="text-xs mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
+              Leave blank to create an area-level task without a specific project
+            </p>
           </div>
         )}
 

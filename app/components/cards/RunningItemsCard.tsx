@@ -73,20 +73,28 @@ export function RunningItemsCard() {
           do_date,
           created_at,
           domain_id,
-          domains!inner(
+          area_id,
+          domains(
             id,
-            areas_of_life!inner(
+            areas_of_life(
               id,
               name,
               color,
               icon
             )
+          ),
+          areas_of_life(
+            id,
+            name,
+            color,
+            icon
           )
         `);
 
       if (tasks) {
         tasks.forEach((task: any) => {
-          const area = task.domains?.areas_of_life;
+          // Get area from either direct link or through domain
+          const area = task.areas_of_life || task.domains?.areas_of_life;
           if (area) {
             allItems.push({
               id: task.id,
@@ -119,20 +127,28 @@ export function RunningItemsCard() {
           do_date,
           created_at,
           domain_id,
-          domains!inner(
+          area_id,
+          domains(
             id,
-            areas_of_life!inner(
+            areas_of_life(
               id,
               name,
               color,
               icon
             )
+          ),
+          areas_of_life(
+            id,
+            name,
+            color,
+            icon
           )
         `);
 
       if (bugs) {
         bugs.forEach((bug: any) => {
-          const area = bug.domains?.areas_of_life;
+          // Get area from either direct link or through domain
+          const area = bug.areas_of_life || bug.domains?.areas_of_life;
           if (area) {
             allItems.push({
               id: bug.id,
@@ -165,20 +181,28 @@ export function RunningItemsCard() {
           do_date,
           created_at,
           domain_id,
-          domains!inner(
+          area_id,
+          domains(
             id,
-            areas_of_life!inner(
+            areas_of_life(
               id,
               name,
               color,
               icon
             )
+          ),
+          areas_of_life(
+            id,
+            name,
+            color,
+            icon
           )
         `);
 
       if (features) {
         features.forEach((feature: any) => {
-          const area = feature.domains?.areas_of_life;
+          // Get area from either direct link or through domain
+          const area = feature.areas_of_life || feature.domains?.areas_of_life;
           if (area) {
             allItems.push({
               id: feature.id,
