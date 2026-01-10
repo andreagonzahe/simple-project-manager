@@ -1,5 +1,5 @@
 // Database enums
-export type ItemStatus = 'backlog' | 'todo' | 'in_progress' | 'completed' | 'blocked';
+export type ItemStatus = 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed';
 export type ItemPriority = 'low' | 'medium' | 'high' | 'critical';
 export type BugSeverity = 'minor' | 'major' | 'critical';
 
@@ -9,7 +9,6 @@ export type BugSeverity = 'minor' | 'major' | 'critical';
 export interface AreaOfLife {
   id: string;
   name: string;
-  description?: string;
   color: string;
   icon?: string;
   sort_order: number;
@@ -89,6 +88,7 @@ export interface DomainWithCounts extends Domain {
 // Form types
 export interface AreaFormData {
   name: string;
+  description?: string;
   color: string;
   icon?: string;
   sort_order: number;

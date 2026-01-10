@@ -25,7 +25,7 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
     title: '',
     description: '',
     priority: 'medium' as 'low' | 'medium' | 'high',
-    status: 'todo' as 'backlog' | 'todo' | 'in_progress' | 'completed' | 'blocked',
+    status: 'idea' as 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed',
     severity: 'minor' as 'minor' | 'major' | 'critical', // Only for bugs
     due_date: '',
     do_date: '',
@@ -138,7 +138,7 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
         title: '',
         description: '',
         priority: 'medium',
-        status: 'backlog',
+        status: 'todo',
         severity: 'minor',
         due_date: '',
         do_date: '',
@@ -330,8 +330,10 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
                 className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="backlog" className="bg-gray-800">Backlog</option>
+                <option value="todo" className="bg-gray-800">To Do</option>
                 <option value="in_progress" className="bg-gray-800">In Progress</option>
                 <option value="completed" className="bg-gray-800">Completed</option>
+                <option value="blocked" className="bg-gray-800">Blocked</option>
               </select>
             </div>
           )}
