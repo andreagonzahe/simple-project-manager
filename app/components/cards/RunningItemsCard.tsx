@@ -33,7 +33,7 @@ export function RunningItemsCard() {
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('do_date');
   const [filterType, setFilterType] = useState<FilterType>('all');
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>('executing');
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [filterPriority, setFilterPriority] = useState<FilterPriority>('all');
   const [filterArea, setFilterArea] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
