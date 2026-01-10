@@ -90,9 +90,6 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:90',message:'handleSubmit called',data:{selectedAreaId,selectedDomainId,formData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B,E'})}).catch(()=>{});
-    // #endregion
     
     if (!selectedAreaId) {
       setError('Please select an area');
@@ -114,9 +111,6 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
         do_date: formData.do_date || null,
       };
 
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:112',message:'baseData constructed',data:{baseData,itemType:formData.type},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,C'})}).catch(()=>{});
-      // #endregion
 
       // Save to the appropriate table based on type
       let insertError;
@@ -125,28 +119,16 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
           ...baseData,
           severity: formData.severity,
         };
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:121',message:'Inserting bug',data:{bugData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         const result = await supabase.from('bugs').insert([bugData as any]);
         insertError = result.error;
       } else if (formData.type === 'feature') {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:128',message:'Inserting feature',data:{featureData:baseData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         const result = await supabase.from('features').insert([baseData as any]);
         insertError = result.error;
       } else {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:135',message:'Inserting task',data:{taskData:baseData},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         const result = await supabase.from('tasks').insert([baseData as any]);
         insertError = result.error;
       }
 
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:142',message:'Insert result',data:{hasError:!!insertError,errorDetails:insertError?{message:insertError.message,code:insertError.code,details:insertError.details,hint:insertError.hint}:null},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,D'})}).catch(()=>{});
-      // #endregion
 
       if (insertError) throw insertError;
 
@@ -167,9 +149,6 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
       setSelectedAreaId('');
       setSelectedDomainId('');
     } catch (err) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:157',message:'Insert error caught',data:{error:err instanceof Error?{message:err.message,name:err.name,stack:err.stack}:err,errorType:typeof err},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
       setError(err instanceof Error ? err.message : 'Failed to create item');
     } finally {
       setIsSubmitting(false);

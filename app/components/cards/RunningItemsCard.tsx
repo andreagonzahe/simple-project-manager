@@ -62,9 +62,6 @@ export function RunningItemsCard() {
       const allItems: RunningItem[] = [];
 
       // Fetch tasks
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RunningItemsCard.tsx:59',message:'Fetching tasks',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FETCH'})}).catch(()=>{});
-      // #endregion
       const { data: tasks } = await supabase
         .from('tasks')
         .select(`
@@ -94,9 +91,6 @@ export function RunningItemsCard() {
           )
         `);
 
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RunningItemsCard.tsx:94',message:'Tasks fetched',data:{taskCount:tasks?.length||0,tasks:tasks?.map((t:any)=>({id:t.id,title:t.title,status:t.status,has_area:!!t.areas_of_life,has_domain_area:!!t.domains?.areas_of_life}))},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FETCH'})}).catch(()=>{});
-      // #endregion
       if (tasks) {
         tasks.forEach((task: any) => {
           // Get area from either direct link or through domain
@@ -120,9 +114,6 @@ export function RunningItemsCard() {
           }
         });
       }
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RunningItemsCard.tsx:117',message:'Tasks processed',data:{processedCount:allItems.filter(i=>i.type==='task').length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FETCH'})}).catch(()=>{});
-      // #endregion
 
       // Fetch bugs
       const { data: bugs } = await supabase
@@ -233,9 +224,6 @@ export function RunningItemsCard() {
       }
 
       setItems(allItems);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RunningItemsCard.tsx:235',message:'All items loaded',data:{totalItems:allItems.length,byType:{task:allItems.filter(i=>i.type==='task').length,bug:allItems.filter(i=>i.type==='bug').length,feature:allItems.filter(i=>i.type==='feature').length}},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FETCH'})}).catch(()=>{});
-      // #endregion
     } catch (error) {
       console.error('Error fetching running items:', error);
     } finally {
@@ -245,9 +233,6 @@ export function RunningItemsCard() {
 
   const applyFiltersAndSort = () => {
     let filtered = [...items];
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RunningItemsCard.tsx:243',message:'Applying filters',data:{totalItems:items.length,filterType,filterStatus,filterPriority,filterArea},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FILTER'})}).catch(()=>{});
-    // #endregion
 
     // Apply filters
     if (filterType !== 'all') {
@@ -296,9 +281,6 @@ export function RunningItemsCard() {
       }
     });
 
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RunningItemsCard.tsx:254',message:'Filters applied',data:{filteredCount:filtered.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FILTER'})}).catch(()=>{});
-    // #endregion
     setFilteredItems(filtered);
   };
 
