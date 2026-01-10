@@ -9,6 +9,7 @@ export type BugSeverity = 'minor' | 'major' | 'critical';
 export interface AreaOfLife {
   id: string;
   name: string;
+  description?: string;
   color: string;
   icon?: string;
   sort_order: number;
