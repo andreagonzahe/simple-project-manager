@@ -9,6 +9,30 @@ interface StatusBadgeProps {
 export function StatusBadge({ status = 'backlog', className = '' }: StatusBadgeProps) {
   const color = getStatusColor(status);
   
+  // Format status label
+  const getStatusLabel = (status: ItemStatus): string => {
+    switch (status) {
+      case 'idea_validation':
+        return 'Idea Validation';
+      case 'backlog':
+        return 'Backlog';
+      case 'idea':
+        return 'Idea';
+      case 'exploration':
+        return 'Exploration';
+      case 'planning':
+        return 'Planning';
+      case 'executing':
+        return 'Executing';
+      case 'complete':
+        return 'Complete';
+      case 'dismissed':
+        return 'Dismissed';
+      default:
+        return capitalize(status);
+    }
+  };
+  
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${className}`}
@@ -17,7 +41,7 @@ export function StatusBadge({ status = 'backlog', className = '' }: StatusBadgeP
         color: color,
       }}
     >
-      {status === 'in_progress' ? 'In Progress' : capitalize(status)}
+      {getStatusLabel(status)}
     </span>
   );
 }

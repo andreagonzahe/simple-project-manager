@@ -16,10 +16,20 @@ export function getStatusColor(status?: ItemStatus): string {
   switch (status) {
     case 'backlog':
       return '#6B7280'; // Gray
-    case 'in_progress':
-      return '#3B82F6'; // Blue
-    case 'completed':
+    case 'idea':
+      return '#A78BFA'; // Purple
+    case 'idea_validation':
+      return '#818CF8'; // Indigo
+    case 'exploration':
+      return '#60A5FA'; // Light Blue
+    case 'planning':
+      return '#34D399'; // Emerald
+    case 'executing':
+      return '#FBBF24'; // Amber
+    case 'complete':
       return '#10B981'; // Green
+    case 'dismissed':
+      return '#9CA3AF'; // Gray
     default:
       return '#6B7280';
   }

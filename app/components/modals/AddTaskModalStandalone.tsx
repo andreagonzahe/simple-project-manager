@@ -167,6 +167,9 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
       setSelectedAreaId('');
       setSelectedDomainId('');
     } catch (err) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AddTaskModalStandalone.tsx:157',message:'Insert error caught',data:{error:err instanceof Error?{message:err.message,name:err.name,stack:err.stack}:err,errorType:typeof err},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
       setError(err instanceof Error ? err.message : 'Failed to create item');
     } finally {
       setIsSubmitting(false);
