@@ -321,7 +321,8 @@ export function RunningItemsCard() {
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="glass rounded-3xl p-8 h-fit sticky top-8"
+      className="glass rounded-3xl p-8 h-fit border-2"
+      style={{ borderColor: 'var(--color-border)' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
