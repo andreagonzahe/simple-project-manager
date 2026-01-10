@@ -86,9 +86,6 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
     return colorMap[area.color] || 'glow-blue';
   };
 
-  const activeItems = Math.floor(area.totalItems * 0.6);
-  const blockedItems = area.totalItems - activeItems;
-
   const cardContent = (
     <motion.div
       whileHover={!isInDragContext ? { scale: 1.02, y: -8 } : {}}
