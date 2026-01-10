@@ -28,6 +28,7 @@ export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselect
     name: '',
     description: '',
     color: defaultColors[0],
+    status: 'idea',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +83,7 @@ export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselect
 
       onSuccess();
       onClose();
-      setFormData({ area_id: '', name: '', description: '', color: defaultColors[0] });
+      setFormData({ area_id: '', name: '', description: '', color: defaultColors[0], status: 'idea' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create project');
     } finally {
@@ -153,6 +154,29 @@ export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselect
             placeholder="Brief description of this project..."
             rows={3}
           />
+        </div>
+
+        {/* Status */}
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium mb-3 text-white">
+            Status *
+          </label>
+          <select
+            id="status"
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+            className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="backlog">Backlog</option>
+            <option value="idea">Idea</option>
+            <option value="idea_validation">Idea Validation</option>
+            <option value="exploration">Exploration</option>
+            <option value="planning">Planning</option>
+            <option value="executing">Executing</option>
+            <option value="complete">Complete</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
         </div>
 
         {/* Color Picker */}

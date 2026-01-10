@@ -28,6 +28,7 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
     name: '',
     description: '',
     color: defaultColors[0],
+    status: 'idea' as any,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +39,7 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
         name: domain.name,
         description: domain.description || '',
         color: domain.color || defaultColors[0],
+        status: domain.status || 'idea',
       });
     }
   }, [domain, isOpen]);
@@ -56,6 +58,7 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
           name: formData.name,
           description: formData.description || null,
           color: formData.color,
+          status: formData.status,
         })
         .eq('id', domain.id);
 
@@ -112,6 +115,28 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
             placeholder="Brief description of this project..."
             rows={3}
           />
+        </div>
+
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium mb-3" style={{ color: 'var(--color-text-primary)' }}>
+            Status *
+          </label>
+          <select
+            id="status"
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+            className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          >
+            <option value="backlog">Backlog</option>
+            <option value="idea">Idea</option>
+            <option value="idea_validation">Idea Validation</option>
+            <option value="exploration">Exploration</option>
+            <option value="planning">Planning</option>
+            <option value="executing">Executing</option>
+            <option value="complete">Complete</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
         </div>
 
         <div>

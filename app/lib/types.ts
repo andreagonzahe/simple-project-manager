@@ -24,6 +24,7 @@ export interface Domain {
   name: string;
   description?: string;
   color: string;
+  status: ItemStatus;
   goals?: string[];
   created_at: string;
   updated_at: string;
@@ -100,6 +101,7 @@ export interface DomainFormData {
   name: string;
   description?: string;
   color: string;
+  status?: ItemStatus;
 }
 
 export interface ItemFormData {

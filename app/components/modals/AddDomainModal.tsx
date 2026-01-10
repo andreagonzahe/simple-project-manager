@@ -27,6 +27,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
     name: '',
     description: '',
     color: defaultColors[0],
+    status: 'idea',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,9 +46,9 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
 
       onSuccess();
       onClose();
-      setFormData({ area_id: areaId, name: '', description: '', color: defaultColors[0] });
+      setFormData({ area_id: areaId, name: '', description: '', color: defaultColors[0], status: 'idea' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create domain');
+      setError(err instanceof Error ? err.message : 'Failed to create project');
     } finally {
       setIsSubmitting(false);
     }
@@ -89,6 +90,28 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
             placeholder="Brief description of this project..."
             rows={3}
           />
+        </div>
+
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+            Status *
+          </label>
+          <select
+            id="status"
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required
+          >
+            <option value="backlog">Backlog</option>
+            <option value="idea">Idea</option>
+            <option value="idea_validation">Idea Validation</option>
+            <option value="exploration">Exploration</option>
+            <option value="planning">Planning</option>
+            <option value="executing">Executing</option>
+            <option value="complete">Complete</option>
+            <option value="dismissed">Dismissed</option>
+          </select>
         </div>
 
         <div>

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Plus, ArrowLeft, Target } from 'lucide-react';
+import { Plus, ArrowLeft, Target, Filter } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
-import type { AreaOfLife, Domain, DomainWithCounts } from '@/app/lib/types';
+import type { AreaOfLife, Domain, DomainWithCounts, ItemStatus } from '@/app/lib/types';
 import { DomainCard } from '@/app/components/cards/DomainCard';
 import { AddDomainModal } from '@/app/components/modals/AddDomainModal';
 import { EditDomainModal } from '@/app/components/modals/EditDomainModal';
@@ -25,6 +25,7 @@ export default function DomainsPage() {
 
   const [area, setArea] = useState<AreaOfLife | null>(null);
   const [domains, setDomains] = useState<DomainWithCounts[]>([]);
+  const [filteredDomains, setFilteredDomains] = useState<DomainWithCounts[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -32,6 +33,9 @@ export default function DomainsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedDomain, setSelectedDomain] = useState<DomainWithCounts | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<'all' | ItemStatus>('all');
+  const [sortBy, setSortBy] = useState<'created_at' | 'name' | 'status'>('created_at');
   const { toasts, showToast, removeToast } = useToast();
 
   const fetchData = async () => {
@@ -120,6 +124,34 @@ export default function DomainsPage() {
   useEffect(() => {
     fetchData();
   }, [areaId]);
+
+  useEffect(() => {
+    applyFiltersAndSort();
+  }, [domains, filterStatus, sortBy]);
+
+  const applyFiltersAndSort = () => {
+    let filtered = [...domains];
+
+    // Apply status filter
+    if (filterStatus !== 'all') {
+      filtered = filtered.filter(d => d.status === filterStatus);
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'status':
+          return a.status.localeCompare(b.status);
+        case 'created_at':
+        default:
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
+
+    setFilteredDomains(filtered);
+  };
 
   const handleAddSuccess = async () => {
     showToast('Project created successfully!', 'success');
@@ -241,6 +273,14 @@ export default function DomainsPage() {
             </div>
             <div className="flex items-center gap-3">
               <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`px-4 py-2 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${showFilters ? 'opacity-100' : 'opacity-70'}`}
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                <Filter size={16} />
+                Filters
+              </button>
+              <button
                 onClick={() => setIsAddModalOpen(true)}
                 className="px-5 py-3 glass glass-hover rounded-2xl text-sm font-medium transition-all flex items-center gap-2"
                 style={{ color: 'var(--color-text-primary)' }}
@@ -291,32 +331,96 @@ export default function DomainsPage() {
           </motion.section>
         )}
 
+        {/* Filters */}
+        {showFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mb-6 p-5 glass rounded-2xl"
+          >
+            <div className="grid grid-cols-2 gap-4">
+              {/* Status Filter */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                  Status
+                </label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value as any)}
+                  className="w-full px-3 py-2 glass rounded-xl outline-none text-sm"
+                  style={{ 
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="backlog">Backlog</option>
+                  <option value="idea">Idea</option>
+                  <option value="idea_validation">Idea Validation</option>
+                  <option value="exploration">Exploration</option>
+                  <option value="planning">Planning</option>
+                  <option value="executing">Executing</option>
+                  <option value="complete">Complete</option>
+                  <option value="dismissed">Dismissed</option>
+                </select>
+              </div>
+
+              {/* Sort By */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                  Sort By
+                </label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="w-full px-3 py-2 glass rounded-xl outline-none text-sm"
+                  style={{ 
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <option value="created_at">Created Date</option>
+                  <option value="name">Name</option>
+                  <option value="status">Status</option>
+                </select>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Domains Grid */}
-        {domains.length === 0 ? (
-          <EmptyState
-            title="No projects yet"
-            description="Create your first project to start organizing work."
-            action={
-              <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center gap-3 px-6 py-4 glass glass-hover rounded-2xl font-medium transition-all"
+        {filteredDomains.length === 0 ? (
+          domains.length === 0 ? (
+            <EmptyState
+              title="No projects yet"
+              description="Create your first project to start organizing work."
+              action={
+                <button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="flex items-center gap-3 px-6 py-4 glass glass-hover rounded-2xl font-medium transition-all"
                 style={{ 
                   background: 'linear-gradient(135deg, rgba(123, 159, 255, 0.8), rgba(155, 110, 255, 0.8))',
                   color: 'white',
                 }}
               >
-                <Plus size={20} strokeWidth={2.5} />
-                <span>Create Your First Project</span>
-              </button>
-            }
-          />
+              <Plus size={20} strokeWidth={2.5} />
+              <span>Create Your First Project</span>
+            </button>
+          }
+        />
+          ) : (
+            <EmptyState
+              title="No matching projects"
+              description="Try adjusting your filters to see more results."
+            />
+          )
         ) : (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
           >
-            {domains.map((domain, index) => (
+            {filteredDomains.map((domain, index) => (
               <motion.div
                 key={domain.id}
                 initial={{ opacity: 0, y: 20 }}

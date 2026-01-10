@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import type { DomainWithCounts } from '@/app/lib/types';
 import { ChevronRight, Edit2, Target, Trash2 } from 'lucide-react';
+import { StatusBadge } from '../badges/StatusBadge';
 
 interface DomainCardProps {
   domain: DomainWithCounts;
@@ -113,6 +114,10 @@ export function DomainCard({ domain, areaId, onEdit, onEditGoals, onDelete }: Do
                   {domain.description}
                 </p>
               )}
+              {/* Status Badge */}
+              <div className="mt-2">
+                <StatusBadge status={domain.status} />
+              </div>
             </div>
 
             {/* Goals Section */}
