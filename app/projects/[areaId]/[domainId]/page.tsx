@@ -51,9 +51,18 @@ export default function DomainDetailPage() {
 
   const [area, setArea] = useState<Area | null>(null);
   const [domain, setDomain] = useState<Domain | null>(null);
+  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterType, setFilterType] = useState<'all' | 'task' | 'bug' | 'feature'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | ItemStatus>('all');
+  const [sortBy, setSortBy] = useState<'created_at' | 'do_date' | 'due_date' | 'priority' | 'status'>('created_at');
   const { toasts, showToast, removeToast } = useToast();
 
   const fetchData = async () => {
