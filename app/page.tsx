@@ -226,6 +226,8 @@ export default function HomePage() {
     showToast('Area updated successfully!', 'success');
     await new Promise(resolve => setTimeout(resolve, 500));
     await fetchAreas();
+    // Refresh Today's Focus to show updated area names/colors/icons
+    await refreshTodaysFocus();
   };
 
   const handleAreaGoalsSuccess = async () => {
