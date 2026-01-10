@@ -62,6 +62,9 @@ export function RunningItemsCard() {
       const allItems: RunningItem[] = [];
 
       // Fetch tasks
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/cb54d9a2-6902-4fb5-996f-ee0d26624b12',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'RunningItemsCard.tsx:59',message:'Fetching tasks',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'FETCH'})}).catch(()=>{});
+      // #endregion
       const { data: tasks } = await supabase
         .from('tasks')
         .select(`
