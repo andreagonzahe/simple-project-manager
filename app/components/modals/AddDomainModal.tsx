@@ -54,7 +54,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add New Domain">
+    <Modal isOpen={isOpen} onClose={onClose} title="Add New Project">
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
@@ -64,7 +64,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
 
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-            Name *
+            Project Name *
           </label>
           <input
             type="text"
@@ -86,7 +86,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="Brief description of this domain..."
+            placeholder="Brief description of this project..."
             rows={3}
           />
         </div>
@@ -127,7 +127,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Creating...' : 'Create Domain'}
+            {isSubmitting ? 'Creating...' : 'Create Project'}
           </button>
         </div>
       </form>
