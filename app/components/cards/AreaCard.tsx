@@ -4,17 +4,18 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import type { AreaWithCounts } from '@/app/lib/types';
 import * as Icons from 'lucide-react';
-import { Trash2, ChevronRight, Plus, Target } from 'lucide-react';
+import { Trash2, ChevronRight, Plus, Target, Pencil } from 'lucide-react';
 
 interface AreaCardProps {
   area: AreaWithCounts;
   onDelete?: (id: string) => void;
   onAddProject?: (areaId: string) => void;
   onEditGoals?: (areaId: string) => void;
+  onEdit?: (areaId: string) => void;
   isInDragContext?: boolean;
 }
 
-export function AreaCard({ area, onDelete, onAddProject, onEditGoals, isInDragContext = false }: AreaCardProps) {
+export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, isInDragContext = false }: AreaCardProps) {
   // Convert icon name to PascalCase (e.g., "hand-coins" -> "HandCoins")
   const convertIconName = (iconName: string) => {
     if (!iconName) return null;
@@ -53,6 +54,14 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, isInDragCo
     }
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onEdit) {
+      onEdit(area.id);
+    }
+  };
+
   const goals = Array.isArray(area.goals) ? area.goals : [];
 
   // Get glow class based on color
@@ -88,6 +97,20 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, isInDragCo
     >
       {/* Action Buttons */}
       <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
+        {onEdit && (
+          <button
+            onClick={handleEdit}
+            className="p-3 rounded-2xl glass"
+            style={{
+              background: 'rgba(59, 130, 246, 0.15)',
+              border: '1.5px solid rgba(59, 130, 246, 0.3)',
+            }}
+            aria-label="Edit area"
+            title="Edit Area"
+          >
+            <Pencil size={18} strokeWidth={2.5} style={{ color: 'var(--color-text-primary)' }} />
+          </button>
+        )}
         {onEditGoals && (
           <button
             onClick={handleEditGoals}

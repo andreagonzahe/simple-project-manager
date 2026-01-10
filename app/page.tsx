@@ -14,6 +14,7 @@ import { AddTaskModalStandalone } from './components/modals/AddTaskModalStandalo
 import { EditTodaysFocusModal } from './components/modals/EditTodaysFocusModal';
 import { EditGoalsModal } from './components/modals/EditGoalsModal';
 import { EditAreaGoalsModal } from './components/modals/EditAreaGoalsModal';
+import { EditAreaModal } from './components/modals/EditAreaModal';
 import { EmptyState } from './components/ui/EmptyState';
 import { ToastContainer, useToast } from './components/ui/Toast';
 import { DeleteConfirmModal } from './components/modals/DeleteConfirmModal';
@@ -53,6 +54,7 @@ export default function HomePage() {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isEditFocusModalOpen, setIsEditFocusModalOpen] = useState(false);
   const [isEditAreaGoalsModalOpen, setIsEditAreaGoalsModalOpen] = useState(false);
+  const [isEditAreaModalOpen, setIsEditAreaModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [areaToDelete, setAreaToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -210,6 +212,20 @@ export default function HomePage() {
       setSelectedArea(area);
       setIsEditAreaGoalsModalOpen(true);
     }
+  };
+
+  const handleEditArea = (areaId: string) => {
+    const area = areas.find(a => a.id === areaId);
+    if (area) {
+      setSelectedArea(area);
+      setIsEditAreaModalOpen(true);
+    }
+  };
+
+  const handleAreaEditSuccess = async () => {
+    showToast('Area updated successfully!', 'success');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await fetchAreas();
   };
 
   const handleAreaGoalsSuccess = async () => {
@@ -414,6 +430,7 @@ export default function HomePage() {
                             onDelete={handleDeleteClick}
                             onAddProject={handleAddProjectFromCard}
                             onEditGoals={handleEditAreaGoals}
+                            onEdit={handleEditArea}
                           />
                         </motion.div>
                       ))}
@@ -566,6 +583,18 @@ export default function HomePage() {
         areaName={selectedArea?.name || ''}
         currentGoals={selectedArea?.goals || []}
       />
+
+      {selectedArea && (
+        <EditAreaModal
+          isOpen={isEditAreaModalOpen}
+          onClose={() => {
+            setIsEditAreaModalOpen(false);
+            setSelectedArea(null);
+          }}
+          onSuccess={handleAreaEditSuccess}
+          area={selectedArea}
+        />
+      )}
 
       <DeleteConfirmModal
         isOpen={deleteModalOpen}

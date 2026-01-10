@@ -315,27 +315,29 @@ export function RunningItemsCard() {
         </div>
       </div>
 
-      {/* Sort Options */}
+      {/* Sort Dropdown */}
       <div className="mb-6">
         <label className="text-xs font-medium mb-2 block" style={{ color: 'var(--color-text-tertiary)' }}>
           SORT BY
         </label>
-        <div className="grid grid-cols-2 gap-2">
-          {(['date', 'due_date', 'do_date', 'area', 'type', 'priority', 'status'] as SortOption[]).map((option) => (
-            <button
-              key={option}
-              onClick={() => setSortBy(option)}
-              className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                sortBy === option ? 'glass' : 'opacity-50 hover:opacity-100'
-              }`}
-              style={{ color: 'var(--color-text-primary)' }}
-            >
-              {option === 'due_date' ? 'Due Date' : 
-               option === 'do_date' ? 'Do Date' :
-               option.charAt(0).toUpperCase() + option.slice(1)}
-            </button>
-          ))}
-        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as SortOption)}
+          className="w-full px-4 py-3 glass rounded-xl text-sm font-medium focus:outline-none transition-all"
+          style={{ 
+            color: 'var(--color-text-primary)',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1.5px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <option value="date">Date</option>
+          <option value="due_date">Due Date</option>
+          <option value="do_date">Do Date</option>
+          <option value="area">Area</option>
+          <option value="type">Type</option>
+          <option value="priority">Priority</option>
+          <option value="status">Status</option>
+        </select>
       </div>
 
       {/* Filters */}

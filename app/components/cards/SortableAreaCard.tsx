@@ -11,9 +11,10 @@ interface SortableAreaCardProps {
   onDelete: (id: string) => void;
   onAddProject?: (areaId: string) => void;
   onEditGoals?: (areaId: string) => void;
+  onEdit?: (areaId: string) => void;
 }
 
-export function SortableAreaCard({ area, onDelete, onAddProject, onEditGoals }: SortableAreaCardProps) {
+export function SortableAreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit }: SortableAreaCardProps) {
   const router = useRouter();
   const {
     attributes,
@@ -53,6 +54,7 @@ export function SortableAreaCard({ area, onDelete, onAddProject, onEditGoals }: 
         onDelete={onDelete} 
         onAddProject={onAddProject}
         onEditGoals={onEditGoals}
+        onEdit={onEdit}
         isInDragContext={true} 
       />
     </div>
