@@ -17,7 +17,7 @@ interface FilterControlsProps {
 export function FilterControls({ filters, onFilterChange }: FilterControlsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const statuses: ItemStatus[] = ['backlog', 'in_progress', 'completed'];
+  const statuses: ItemStatus[] = ['backlog', 'idea', 'idea_validation', 'exploration', 'planning', 'executing', 'complete', 'dismissed'];
   const priorities: ItemPriority[] = ['low', 'medium', 'high'];
 
   const toggleStatus = (status: ItemStatus) => {
@@ -90,7 +90,7 @@ export function FilterControls({ filters, onFilterChange }: FilterControlsProps)
                       className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
                     <span className="text-sm text-gray-700 capitalize">
-                      {status === 'in_progress' ? 'In Progress' : status}
+                      {status === 'idea_validation' ? 'Idea Validation' : status.replace('_', ' ')}
                     </span>
                   </label>
                 ))}

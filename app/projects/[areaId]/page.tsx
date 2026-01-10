@@ -78,23 +78,23 @@ export default function DomainsPage() {
 
           const totalTasks = (features.count || 0) + (bugs.count || 0) + (tasks.count || 0);
 
-          // Get active items (not completed)
+          // Get active items (not complete or dismissed)
           const [activeFeat, activeBugs, activeTasks] = await Promise.all([
             supabase
               .from('features')
               .select('*', { count: 'exact', head: true })
               .eq('domain_id', domain.id)
-              .neq('status', 'completed'),
+              .not('status', 'in', '(complete,dismissed)'),
             supabase
               .from('bugs')
               .select('*', { count: 'exact', head: true })
               .eq('domain_id', domain.id)
-              .neq('status', 'completed'),
+              .not('status', 'in', '(complete,dismissed)'),
             supabase
               .from('tasks')
               .select('*', { count: 'exact', head: true })
               .eq('domain_id', domain.id)
-              .neq('status', 'completed'),
+              .not('status', 'in', '(complete,dismissed)'),
           ]);
 
           const activeItems = (activeFeat.count || 0) + (activeBugs.count || 0) + (activeTasks.count || 0);

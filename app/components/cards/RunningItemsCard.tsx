@@ -33,7 +33,7 @@ export function RunningItemsCard() {
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('do_date');
   const [filterType, setFilterType] = useState<FilterType>('all');
-  const [filterStatus, setFilterStatus] = useState<FilterStatus>('in_progress');
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('executing');
   const [filterPriority, setFilterPriority] = useState<FilterPriority>('all');
   const [filterArea, setFilterArea] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
@@ -400,7 +400,7 @@ export function RunningItemsCard() {
                 STATUS
               </label>
               <div className="flex gap-2">
-                {(['all', 'todo', 'in_progress', 'blocked'] as FilterStatus[]).map((status) => (
+                {(['all', 'backlog', 'idea', 'idea_validation', 'exploration', 'planning', 'executing', 'complete', 'dismissed'] as FilterStatus[]).map((status) => (
                   <button
                     key={status}
                     onClick={() => setFilterStatus(status)}
@@ -409,7 +409,7 @@ export function RunningItemsCard() {
                     }`}
                     style={{ color: 'var(--color-text-primary)' }}
                   >
-                    {status === 'in_progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
+                    {status === 'idea_validation' ? 'Idea Val.' : status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
                   </button>
                 ))}
               </div>
