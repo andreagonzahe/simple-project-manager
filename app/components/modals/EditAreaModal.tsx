@@ -20,7 +20,7 @@ interface AreaFormData {
   color: string;
 }
 
-export default function EditAreaModal({ isOpen, onClose, onSuccess, area }: EditAreaModalProps) {
+export function EditAreaModal({ isOpen, onClose, onSuccess, area }: EditAreaModalProps) {
   const [formData, setFormData] = useState<AreaFormData>({
     name: area.name,
     description: area.description || '',
