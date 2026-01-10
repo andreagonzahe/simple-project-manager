@@ -24,7 +24,7 @@ interface RunningItem {
 
 type SortOption = 'date' | 'area' | 'type' | 'priority' | 'status' | 'due_date' | 'do_date';
 type FilterType = 'all' | 'task' | 'bug' | 'feature';
-type FilterStatus = 'all' | 'todo' | 'in_progress' | 'blocked';
+type FilterStatus = 'all' | 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed';
 type FilterPriority = 'all' | 'low' | 'medium' | 'high' | 'critical';
 
 export function RunningItemsCard() {
