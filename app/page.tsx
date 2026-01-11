@@ -342,13 +342,13 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen">
-        <div className="w-full max-w-[1920px] mx-auto px-16 sm:px-20 lg:px-24 xl:px-32 2xl:px-40 py-12">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-40 py-6 sm:py-8 lg:py-12">
           <div className="animate-pulse">
-            <div className="h-12 glass rounded-xl w-96 mb-6"></div>
-            <div className="h-7 glass rounded-lg w-[600px] mb-12"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
+            <div className="h-10 sm:h-12 glass rounded-xl w-full max-w-sm mb-4 sm:mb-6"></div>
+            <div className="h-6 sm:h-7 glass rounded-lg w-full max-w-md mb-8 sm:mb-12"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 sm:gap-6">
               {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-80 glass rounded-3xl min-h-[240px]"></div>
+                <div key={i} className="h-60 sm:h-72 lg:h-80 glass rounded-3xl min-h-[240px]"></div>
               ))}
             </div>
           </div>
@@ -361,62 +361,65 @@ export default function HomePage() {
     <div className="min-h-screen">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       
-      <div className="w-full max-w-[1920px] mx-auto px-16 sm:px-20 lg:px-24 xl:px-32 2xl:px-40 py-12">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-40 py-6 sm:py-8 lg:py-12">
         {/* Header */}
         <motion.header 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="py-8"
+          className="py-4 sm:py-6 lg:py-8"
         >
-          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 mb-8">
-            <div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+          <div className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
                 Andrea's Project Manager
               </h1>
+              <ThemeToggle />
             </div>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <Link
                 href="/calendar"
-                className="px-4 sm:px-5 py-3 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+                className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
                 style={{ 
                   background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
                   color: 'var(--color-text-primary)'
                 }}
               >
-                <Calendar size={18} strokeWidth={2} />
-                <span className="hidden sm:inline">Calendar</span>
+                <Calendar size={16} strokeWidth={2} className="sm:w-[18px] sm:h-[18px]" />
+                <span>Calendar</span>
               </Link>
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="px-4 sm:px-5 py-3 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+                className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
                 style={{ color: 'var(--color-text-primary)' }}
               >
-                <Plus size={18} strokeWidth={2} />
-                <span className="hidden sm:inline">New Area</span>
+                <Plus size={16} strokeWidth={2} className="sm:w-[18px] sm:h-[18px]" />
+                <span>Area</span>
               </button>
               <button
                 onClick={() => setIsAddDomainModalOpen(true)}
-                className="px-4 sm:px-5 py-3 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+                className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
                 style={{ color: 'var(--color-text-primary)' }}
               >
-                <Plus size={18} strokeWidth={2} />
-                <span className="hidden sm:inline">New Project</span>
+                <Plus size={16} strokeWidth={2} className="sm:w-[18px] sm:h-[18px]" />
+                <span>Project</span>
               </button>
               <button 
                 onClick={() => setIsAddTaskModalOpen(true)}
-                className="px-4 sm:px-5 py-3 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-2"
+                className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
                 style={{ color: 'var(--color-text-primary)' }}
               >
-                <Plus size={18} strokeWidth={2} />
-                <span className="hidden sm:inline">New Item</span>
+                <Plus size={16} strokeWidth={2} className="sm:w-[18px] sm:h-[18px]" />
+                <span>Item</span>
               </button>
               <button 
-                className="px-4 sm:px-5 py-3 glass glass-hover rounded-xl text-sm font-medium transition-all hidden lg:block"
+                onClick={() => setIsEditFocusModalOpen(true)}
+                className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
                 style={{ color: 'var(--color-text-primary)' }}
               >
-                Review Today
+                <Edit3 size={16} strokeWidth={2} className="sm:w-[18px] sm:h-[18px]" />
+                <span className="hidden sm:inline">Edit Focus</span>
+                <span className="sm:hidden">Focus</span>
               </button>
-              <ThemeToggle />
             </div>
           </div>
         </motion.header>
@@ -438,10 +441,10 @@ export default function HomePage() {
           />
         ) : (
           <>
-            {/* Two Column Layout */}
-            <div className="flex gap-8 items-start">
+            {/* Responsive Layout: Two columns on XL+, Single column on mobile/tablet */}
+            <div className="flex flex-col xl:flex-row gap-6 sm:gap-8 items-start">
               {/* Left Column - Areas Grid */}
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -454,7 +457,7 @@ export default function HomePage() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="grid grid-cols-1 xl:grid-cols-2 gap-6"
+                      className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6"
                     >
                       {areas.map((area, index) => (
                         <motion.div
@@ -477,8 +480,8 @@ export default function HomePage() {
                 </DndContext>
               </div>
 
-              {/* Right Column - Today's Focus + Running Items */}
-              <div className="w-[400px] hidden xl:block space-y-6">
+              {/* Right Column - Today's Focus + Running Items (XL+ sidebar, mobile full-width) */}
+              <div className="w-full xl:w-[400px] space-y-4 sm:space-y-6">
                 {/* Today's Focus - Compact Version */}
                 <motion.section
                   initial={{ opacity: 0, y: 20 }}
@@ -494,14 +497,14 @@ export default function HomePage() {
                     }}
                   />
                   
-                  <div className="relative glass rounded-3xl p-8 border-2" style={{ borderColor: 'rgba(155, 110, 255, 0.25)' }}>
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+                  <div className="relative glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border-2" style={{ borderColor: 'rgba(155, 110, 255, 0.25)' }}>
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
+                      <h2 className="text-lg sm:text-xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
                         Today's Focus
                       </h2>
                       <button
                         onClick={() => setIsEditFocusModalOpen(true)}
-                        className="px-3 py-2 glass glass-hover rounded-xl text-xs font-medium transition-all flex items-center gap-2"
+                        className="px-2.5 sm:px-3 py-1.5 sm:py-2 glass glass-hover rounded-lg sm:rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 sm:gap-2"
                         style={{ color: 'var(--color-text-primary)' }}
                       >
                         <Edit3 size={14} strokeWidth={2.5} />
@@ -510,24 +513,24 @@ export default function HomePage() {
                     </div>
 
                     {todaysFocus.length === 0 ? (
-                      <div className="text-center py-8">
-                        <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+                      <div className="text-center py-6 sm:py-8">
+                        <p className="text-xs sm:text-sm mb-3 sm:mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                           No focus domains yet. Add up to 3.
                         </p>
                         <button
                           onClick={() => setIsEditFocusModalOpen(true)}
-                          className="px-4 py-2 rounded-xl transition-all font-medium inline-flex items-center gap-2 text-sm"
+                          className="px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl transition-all font-medium inline-flex items-center gap-2 text-xs sm:text-sm"
                           style={{
                             background: 'linear-gradient(135deg, rgba(123, 159, 255, 0.8), rgba(155, 110, 255, 0.8))',
                             color: 'white',
                           }}
                         >
-                          <Plus size={16} strokeWidth={2.5} />
+                          <Plus size={14} strokeWidth={2.5} className="sm:w-4 sm:h-4" />
                           Add Domains
                         </button>
                       </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-2 sm:space-y-3">
                         {todaysFocus.map((item) => {
                           // Convert icon name to PascalCase
                           const convertIconName = (iconName: string) => {
@@ -547,20 +550,20 @@ export default function HomePage() {
                             <Link
                               key={item.id}
                               href={`/projects/${item.areaId}`}
-                              className="flex items-center gap-4 p-4 glass glass-hover rounded-2xl transition-all"
+                              className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass glass-hover rounded-xl sm:rounded-2xl transition-all"
                             >
                               <div 
-                                className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" 
+                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0" 
                                 style={{ 
                                   background: `linear-gradient(135deg, ${item.areaColor}25, ${item.areaColor}15)`,
                                   border: `1.5px solid ${item.areaColor}35`,
                                   boxShadow: `0 4px 16px ${item.areaColor}20`,
                                 }}
                               >
-                                <IconComponent size={20} style={{ color: item.areaColor }} strokeWidth={2.5} />
+                                <IconComponent size={18} style={{ color: item.areaColor }} strokeWidth={2.5} className="sm:w-5 sm:h-5" />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <span className="font-semibold text-sm block" style={{ color: 'var(--color-text-primary)' }}>
+                                <span className="font-semibold text-xs sm:text-sm block" style={{ color: 'var(--color-text-primary)' }}>
                                   {item.areaName}
                                 </span>
                               </div>

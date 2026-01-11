@@ -93,11 +93,11 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
       className={`relative glass glass-hover p-12 min-h-[280px] ${getGlowClass()} h-full flex flex-col`}
     >
       {/* Action Buttons */}
-      <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex gap-1.5 sm:gap-2 opacity-0 group-hover:opacity-100 transition-all z-10">
         {onEdit && (
           <button
             onClick={handleEdit}
-            className="p-3 rounded-2xl glass"
+            className="p-2 sm:p-3 rounded-xl sm:rounded-2xl glass"
             style={{
               background: 'rgba(59, 130, 246, 0.15)',
               border: '1.5px solid rgba(59, 130, 246, 0.3)',
@@ -105,13 +105,13 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
             aria-label="Edit area"
             title="Edit Area"
           >
-            <Pencil size={18} strokeWidth={2.5} style={{ color: 'var(--color-text-primary)' }} />
+            <Pencil size={16} strokeWidth={2.5} style={{ color: 'var(--color-text-primary)' }} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         )}
         {onEditGoals && (
           <button
             onClick={handleEditGoals}
-            className="p-3 rounded-2xl glass"
+            className="p-2 sm:p-3 rounded-xl sm:rounded-2xl glass"
             style={{
               background: 'rgba(155, 110, 255, 0.15)',
               border: '1.5px solid rgba(155, 110, 255, 0.3)',
@@ -119,52 +119,52 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
             aria-label="Edit goals"
             title="Edit Goals"
           >
-            <Target size={18} strokeWidth={2.5} style={{ color: 'var(--color-text-primary)' }} />
+            <Target size={16} strokeWidth={2.5} style={{ color: 'var(--color-text-primary)' }} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         )}
         {onDelete && (
           <button
             onClick={handleDelete}
-            className="p-3 rounded-2xl glass"
+            className="p-2 sm:p-3 rounded-xl sm:rounded-2xl glass"
             style={{
               background: 'rgba(255, 107, 107, 0.15)',
               border: '1.5px solid rgba(255, 107, 107, 0.3)',
             }}
             aria-label="Delete area"
           >
-            <Trash2 size={18} strokeWidth={2.5} className="text-red-400" />
+            <Trash2 size={16} strokeWidth={2.5} className="text-red-400 sm:w-[18px] sm:h-[18px]" />
           </button>
         )}
       </div>
 
       {/* Icon + Title */}
-      <div className="flex items-start gap-8 mb-12">
+      <div className="flex items-start gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 lg:mb-12">
         <div 
-          className="w-20 h-20 rounded-3xl flex items-center justify-center flex-shrink-0 glass transition-all duration-400 group-hover:scale-110"
+          className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center flex-shrink-0 glass transition-all duration-400 group-hover:scale-110"
           style={{ 
             background: `linear-gradient(135deg, ${area.color}25, ${area.color}15)`,
             border: `1.5px solid ${area.color}35`,
             boxShadow: `0 8px 24px ${area.color}20`,
           }}
         >
-          <IconComponent size={38} style={{ color: area.color }} strokeWidth={2.5} />
+          <IconComponent size={28} style={{ color: area.color }} strokeWidth={2.5} className="sm:w-8 sm:h-8 lg:w-9 lg:h-9" />
         </div>
-        <div className="flex-1 min-w-0 pt-2">
-          <h3 className="text-2xl font-bold tracking-tight mb-4 flex items-center gap-3" style={{ color: 'var(--color-text-primary)' }}>
+        <div className="flex-1 min-w-0 pt-1 sm:pt-2">
+          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight mb-2 sm:mb-3 lg:mb-4 flex items-center gap-2 sm:gap-3" style={{ color: 'var(--color-text-primary)' }}>
             {area.name}
             <ChevronRight 
-              size={26} 
-              className="opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-2" 
+              size={20} 
+              className="opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-2 sm:w-6 sm:h-6" 
               style={{ color: 'var(--color-text-tertiary)' }}
               strokeWidth={2.5}
             />
           </h3>
-          <div className="space-y-1">
-            <div className="text-xl font-light" style={{ color: 'var(--color-text-secondary)' }}>
+          <div className="space-y-0.5 sm:space-y-1">
+            <div className="text-base sm:text-lg lg:text-xl font-light" style={{ color: 'var(--color-text-secondary)' }}>
               {area.domainCount} {area.domainCount === 1 ? 'project' : 'projects'}
             </div>
             {area.totalItems > 0 && (
-              <div className="text-base font-light" style={{ color: 'var(--color-text-tertiary)' }}>
+              <div className="text-sm sm:text-base font-light" style={{ color: 'var(--color-text-tertiary)' }}>
                 {area.totalItems} {area.totalItems === 1 ? 'item' : 'items'}
               </div>
             )}
@@ -195,24 +195,24 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
       )}
 
       {area.domainCount === 0 && (
-        <div className="text-base font-light mb-12 flex items-center gap-2" style={{ color: 'var(--color-text-tertiary)' }}>
-          <span className="w-2 h-2 rounded-full" style={{ background: area.color, opacity: 0.5 }}></span>
+        <div className="text-sm sm:text-base font-light mb-6 sm:mb-8 lg:mb-12 flex items-center gap-1.5 sm:gap-2" style={{ color: 'var(--color-text-tertiary)' }}>
+          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ background: area.color, opacity: 0.5 }}></span>
           No projects yet
         </div>
       )}
 
       {/* Ghost Buttons */}
-      <div className="flex items-center justify-between gap-6 mt-auto">
-        <div className="flex-1 px-6 py-3 btn-ghost rounded-2xl text-base font-medium text-center transition-all">
+      <div className="flex items-center justify-between gap-3 sm:gap-4 lg:gap-6 mt-auto">
+        <div className="flex-1 px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 btn-ghost rounded-xl sm:rounded-2xl text-xs sm:text-sm lg:text-base font-medium text-center transition-all">
           View Projects
         </div>
         <button 
           onClick={handleAddProject}
-          className="px-6 py-3 btn-ghost rounded-2xl text-base font-medium transition-all flex items-center gap-2"
+          className="px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 btn-ghost rounded-xl sm:rounded-2xl text-xs sm:text-sm lg:text-base font-medium transition-all flex items-center gap-1.5 sm:gap-2"
         >
-          <Plus size={20} strokeWidth={2.5} />
+          <Plus size={16} strokeWidth={2.5} className="sm:w-5 sm:h-5" />
           Add
-          <ChevronRight size={18} strokeWidth={2.5} />
+          <ChevronRight size={16} strokeWidth={2.5} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>
     </motion.div>
