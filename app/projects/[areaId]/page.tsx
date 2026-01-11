@@ -14,6 +14,7 @@ import { Breadcrumb } from '@/app/components/ui/Breadcrumb';
 import { ToastContainer, useToast } from '@/app/components/ui/Toast';
 import { ThemeToggle } from '@/app/components/ui/ThemeToggle';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 import { EditGoalsModal } from '@/app/components/modals/EditGoalsModal';
 import { DeleteConfirmModal } from '@/app/components/modals/DeleteConfirmModal';

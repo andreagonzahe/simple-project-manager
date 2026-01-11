@@ -275,10 +275,19 @@ export default function DomainDetailPage() {
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       
       <div className="max-w-[1600px] mx-auto px-12 sm:px-16 lg:px-20 py-12">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+              Andrea's Project Manager
+            </h1>
+          </Link>
+          <ThemeToggle />
+        </div>
+
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
-            { label: 'Areas', href: '/' },
             { label: area.name, href: `/projects/${areaId}` },
             { label: domain.name },
           ]}

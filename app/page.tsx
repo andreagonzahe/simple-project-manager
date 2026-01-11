@@ -442,9 +442,11 @@ export default function HomePage() {
         >
           <div className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
-                Andrea's Project Manager
-              </h1>
+              <Link href="/" className="hover:opacity-80 transition-opacity">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
+                  Andrea's Project Manager
+                </h1>
+              </Link>
               <div className="flex items-center gap-3">
                 <ThemeToggle />
                 {/* Hamburger Menu Button - Mobile Only */}

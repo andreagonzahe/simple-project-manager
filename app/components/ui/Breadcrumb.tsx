@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Home } from 'lucide-react';
 
-export interface BreadcrumbItem {
+interface BreadcrumbItem {
   label: string;
   href?: string;
+  color?: string;
 }
 
 interface BreadcrumbProps {
@@ -14,21 +15,36 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav className="flex items-center space-x-2 text-sm mb-6" aria-label="Breadcrumb">
+    <nav className="flex items-center gap-2 text-sm mb-6 overflow-x-auto" style={{ color: 'var(--color-text-tertiary)' }}>
+      {/* Home Icon */}
+      <Link 
+        href="/" 
+        className="flex items-center gap-1.5 hover:text-blue-400 transition-colors flex-shrink-0"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
+        <Home size={16} strokeWidth={2} />
+        <span>Home</span>
+      </Link>
+
+      {/* Breadcrumb Items */}
       {items.map((item, index) => (
-        <div key={index} className="flex items-center">
-          {index > 0 && (
-            <ChevronRight size={16} className="text-gray-400 mx-2" />
-          )}
+        <div key={index} className="flex items-center gap-2 flex-shrink-0">
+          <ChevronRight size={16} strokeWidth={2} style={{ color: 'var(--color-text-tertiary)' }} />
           {item.href ? (
-            <Link
+            <Link 
               href={item.href}
-              className="text-gray-600 hover:text-gray-900 transition-colors font-medium"
+              className="hover:text-blue-400 transition-colors truncate max-w-[200px]"
+              style={{ color: item.color || 'var(--color-text-secondary)' }}
             >
               {item.label}
             </Link>
           ) : (
-            <span className="text-gray-900 font-semibold">{item.label}</span>
+            <span 
+              className="font-medium truncate max-w-[200px]"
+              style={{ color: item.color || 'var(--color-text-primary)' }}
+            >
+              {item.label}
+            </span>
           )}
         </div>
       ))}
