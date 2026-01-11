@@ -166,7 +166,6 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchAreas();
-    fetchReminders();
     loadTodaysFocus();
   }, []);
 
