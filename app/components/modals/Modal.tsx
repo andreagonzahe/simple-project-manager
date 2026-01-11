@@ -49,28 +49,28 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
           />
           
           {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
-              className={`relative w-full ${sizeClasses[size]} glass rounded-3xl shadow-2xl`}
+              className={`relative w-full ${sizeClasses[size]} glass rounded-2xl sm:rounded-3xl shadow-2xl my-auto max-h-[90vh] flex flex-col`}
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-8 py-6 border-b border-white/10">
-                <h2 className="text-2xl font-bold text-white tracking-tight">{title}</h2>
+              <div className="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-white/10">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white tracking-tight">{title}</h2>
                 <button
                   onClick={onClose}
                   className="p-2 rounded-xl glass-hover transition-all"
                   aria-label="Close modal"
                 >
-                  <X size={24} className="text-gray-400" strokeWidth={2} />
+                  <X size={20} className="text-gray-400 sm:w-6 sm:h-6" strokeWidth={2} />
                 </button>
               </div>
               
-              {/* Content */}
-              <div className="px-8 py-6">
+              {/* Content - Scrollable */}
+              <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6" style={{ WebkitOverflowScrolling: 'touch' }}>
                 {children}
               </div>
             </motion.div>
