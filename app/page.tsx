@@ -10,6 +10,7 @@ import { SortableAreaCard } from './components/cards/SortableAreaCard';
 import { RunningItemsCard } from './components/cards/RunningItemsCard';
 import { RunningProjectsCard } from './components/cards/RunningProjectsCard';
 import { RemindersCard } from './components/cards/RemindersCard';
+import { CompletedTasksCard } from './components/cards/CompletedTasksCard';
 import { AddAreaModal } from './components/modals/AddAreaModal';
 import { AddDomainModalStandalone } from './components/modals/AddDomainModalStandalone';
 import { AddTaskModalStandalone } from './components/modals/AddTaskModalStandalone';
@@ -670,6 +671,9 @@ export default function HomePage() {
 
                 {/* Running Projects Card */}
                 <RunningProjectsCard />
+
+                {/* Completed Tasks */}
+                <CompletedTasksCard />
               </div>
             </div>
           </>

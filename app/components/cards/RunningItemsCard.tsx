@@ -89,7 +89,9 @@ export function RunningItemsCard() {
             color,
             icon
           )
-        `);
+        `)
+        .neq('status', 'complete')
+        .neq('status', 'dismissed');
 
       if (tasks) {
         tasks.forEach((task: any) => {
@@ -143,7 +145,9 @@ export function RunningItemsCard() {
             color,
             icon
           )
-        `);
+        `)
+        .neq('status', 'complete')
+        .neq('status', 'dismissed');
 
       if (bugs) {
         bugs.forEach((bug: any) => {
@@ -197,7 +201,9 @@ export function RunningItemsCard() {
             color,
             icon
           )
-        `);
+        `)
+        .neq('status', 'complete')
+        .neq('status', 'dismissed');
 
       if (features) {
         features.forEach((feature: any) => {
