@@ -56,6 +56,7 @@ interface Reminder {
   id: string;
   title: string;
   description: string | null;
+  due_date: string | null;
   created_at: string;
 }
 

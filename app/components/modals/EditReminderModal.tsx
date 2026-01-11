@@ -9,6 +9,7 @@ interface Reminder {
   id: string;
   title: string;
   description: string | null;
+  due_date: string | null;
 }
 
 interface EditReminderModalProps {
@@ -22,6 +23,7 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    due_date: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -32,6 +34,7 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
       setFormData({
         title: reminder.title,
         description: reminder.description || '',
+        due_date: reminder.due_date || '',
       });
       setError('');
     }
@@ -63,6 +66,7 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
         .update({
           title: formData.title.trim(),
           description: formData.description.trim() || null,
+          due_date: formData.due_date || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', reminder.id);
@@ -141,6 +145,22 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
               }}
               placeholder="Add more details..."
               rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+              Due Date (Optional)
+            </label>
+            <input
+              type="date"
+              value={formData.due_date}
+              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+              className="w-full px-4 py-3 glass rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400/50"
+              style={{ 
+                color: 'var(--color-text-primary)',
+                borderColor: 'var(--color-border)',
+              }}
             />
           </div>
 

@@ -96,8 +96,23 @@ export function RemindersCard({
                       {reminder.title}
                     </h3>
                     {reminder.description && (
-                      <p className="text-xs sm:text-sm line-clamp-2" style={{ color: 'var(--color-text-secondary)' }}>
+                      <p className="text-xs sm:text-sm line-clamp-2 mb-1" style={{ color: 'var(--color-text-secondary)' }}>
                         {reminder.description}
+                      </p>
+                    )}
+                    {reminder.due_date && (
+                      <p className="text-xs flex items-center gap-1.5" style={{ 
+                        color: new Date(reminder.due_date) < new Date() ? '#ef4444' : 'var(--color-text-tertiary)' 
+                      }}>
+                        <span>📅</span>
+                        <span>
+                          Due: {new Date(reminder.due_date).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric',
+                            year: new Date(reminder.due_date).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                          })}
+                          {new Date(reminder.due_date) < new Date() && ' (overdue)'}
+                        </span>
                       </p>
                     )}
                   </div>
