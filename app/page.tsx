@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Calendar } from 'lucide-react';
+import { Plus, Calendar, Menu } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import Link from 'next/link';
 import type { AreaOfLife, AreaWithCounts } from './lib/types';
@@ -20,6 +20,7 @@ import { EmptyState } from './components/ui/EmptyState';
 import { ToastContainer, useToast } from './components/ui/Toast';
 import { DeleteConfirmModal } from './components/modals/DeleteConfirmModal';
 import { ThemeToggle } from './components/ui/ThemeToggle';
+import { MobileMenu } from './components/ui/MobileMenu';
 import { motion } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { Edit3 } from 'lucide-react';
@@ -62,6 +63,7 @@ export default function HomePage() {
   const [todaysFocus, setTodaysFocus] = useState<FocusItem[]>([]);
   const [selectedAreaId, setSelectedAreaId] = useState<string>('');
   const [selectedArea, setSelectedArea] = useState<AreaWithCounts | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { toasts, showToast, removeToast } = useToast();
 
   // Drag and drop sensors
@@ -373,9 +375,20 @@ export default function HomePage() {
               <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
                 Andrea's Project Manager
               </h1>
-              <ThemeToggle />
+              <div className="flex items-center gap-3">
+                <ThemeToggle />
+                {/* Hamburger Menu Button - Mobile Only */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(true)}
+                  className="lg:hidden p-2.5 glass glass-hover rounded-xl transition-all"
+                  aria-label="Open menu"
+                >
+                  <Menu size={20} strokeWidth={2.5} style={{ color: 'var(--color-text-primary)' }} />
+                </button>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Desktop Action Buttons - Hidden on Mobile */}
+            <div className="hidden lg:flex flex-wrap items-center gap-2 sm:gap-3">
               <Link
                 href="/calendar"
                 className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
@@ -650,6 +663,16 @@ export default function HomePage() {
         isDeleting={isDeleting}
         title="Delete Area"
         message={`Are you sure you want to delete "${areaToDelete?.name}"? This will also delete all domains, projects, and items within this area. This action cannot be undone.`}
+      />
+
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        onNewArea={() => setIsAddModalOpen(true)}
+        onNewProject={() => setIsAddDomainModalOpen(true)}
+        onNewItem={() => setIsAddTaskModalOpen(true)}
+        onEditFocus={() => setIsEditFocusModalOpen(true)}
       />
     </div>
   );
