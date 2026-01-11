@@ -100,11 +100,24 @@ export default function HomePage() {
     try {
       const { data, error } = await supabase
         .from('reminders')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*');
 
       if (error) throw error;
-      setReminders(data || []);
+      
+      // Sort reminders: due date ascending (soonest first), nulls last, then by created_at
+      const sorted = (data || []).sort((a, b) => {
+        // If both have due dates, sort by due date
+        if (a.due_date && b.due_date) {
+          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+        }
+        // Reminders with due dates come before those without
+        if (a.due_date && !b.due_date) return -1;
+        if (!a.due_date && b.due_date) return 1;
+        // If neither has due date, sort by created_at (newest first)
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+      
+      setReminders(sorted);
     } catch (error) {
       console.error('Error fetching reminders:', error);
     }
