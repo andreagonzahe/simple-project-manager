@@ -61,34 +61,9 @@ export function AddReminderModal({ isOpen, onClose, onSuccess }: AddReminderModa
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="glass rounded-3xl p-8 w-full max-w-md border-2" style={{ borderColor: 'rgba(239, 68, 68, 0.2)' }}>
-        <div className="flex items-start justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div 
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.15))',
-                border: '1.5px solid rgba(239, 68, 68, 0.3)',
-              }}
-            >
-              <AlertCircle size={20} className="text-red-400" strokeWidth={2.5} />
-            </div>
-            <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-              Add Reminder
-            </h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 glass glass-hover rounded-xl transition-all"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            <X size={20} strokeWidth={2.5} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+    <Modal isOpen={isOpen} onClose={onClose} title="Add Reminder">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
             <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
               Title *
             </label>
@@ -167,7 +142,6 @@ export function AddReminderModal({ isOpen, onClose, onSuccess }: AddReminderModa
             </button>
           </div>
         </form>
-      </div>
-    </Modal>
-  );
-}
+      </Modal>
+    );
+  }

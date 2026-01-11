@@ -2,19 +2,21 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Target, Edit2, Plus, Filter, Trash2, CheckCircle2, AlertCircle, Circle } from 'lucide-react';
+import { Plus, Target, ArrowLeft, Filter, Trash2, Pencil, CheckCircle2, AlertCircle, Circle } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
+import type { ItemStatus, ItemPriority } from '@/app/lib/types';
+import { AddTaskModalStandalone } from '@/app/components/modals/AddTaskModalStandalone';
+import { EditTaskModal } from '@/app/components/modals/EditTaskModal';
+import { EditGoalsModal } from '@/app/components/modals/EditGoalsModal';
+import { DeleteConfirmModal } from '@/app/components/modals/DeleteConfirmModal';
+import { EmptyState } from '@/app/components/ui/EmptyState';
 import { Breadcrumb } from '@/app/components/ui/Breadcrumb';
 import { ToastContainer, useToast } from '@/app/components/ui/Toast';
 import { ThemeToggle } from '@/app/components/ui/ThemeToggle';
-import { EditGoalsModal } from '@/app/components/modals/EditGoalsModal';
-import { AddTaskModalStandalone } from '@/app/components/modals/AddTaskModalStandalone';
-import { EditTaskModal } from '@/app/components/modals/EditTaskModal';
-import { DeleteConfirmModal } from '@/app/components/modals/DeleteConfirmModal';
 import { StatusBadge } from '@/app/components/badges/StatusBadge';
 import { PriorityBadge } from '@/app/components/badges/PriorityBadge';
-import type { ItemStatus, ItemPriority } from '@/app/lib/types';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface Domain {
   id: string;
@@ -23,6 +25,8 @@ interface Domain {
   color: string;
   goals: string[];
   area_id: string;
+  area_name: string;
+  area_color: string;
 }
 
 interface Area {
@@ -359,7 +363,7 @@ export default function DomainDetailPage() {
                 className="px-5 py-3 glass glass-hover rounded-2xl text-sm font-medium transition-all flex items-center gap-2"
                 style={{ color: 'var(--color-text-primary)' }}
               >
-                <Edit2 size={16} strokeWidth={2.5} />
+                <Target size={16} strokeWidth={2.5} />
                 <span>Edit Goals</span>
               </button>
             </div>
