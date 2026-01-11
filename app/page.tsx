@@ -101,6 +101,7 @@ export default function HomePage() {
       const { data, error } = await supabase
         .from('reminders')
         .select('*')
+        .order('due_date', { ascending: true, nullsLast: true })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -165,6 +166,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchAreas();
+    fetchReminders();
     loadTodaysFocus();
   }, []);
 
