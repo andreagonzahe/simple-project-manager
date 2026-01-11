@@ -9,6 +9,7 @@ import { AreaCard } from './components/cards/AreaCard';
 import { SortableAreaCard } from './components/cards/SortableAreaCard';
 import { RunningItemsCard } from './components/cards/RunningItemsCard';
 import { RunningProjectsCard } from './components/cards/RunningProjectsCard';
+import { RemindersCard } from './components/cards/RemindersCard';
 import { AddAreaModal } from './components/modals/AddAreaModal';
 import { AddDomainModalStandalone } from './components/modals/AddDomainModalStandalone';
 import { AddTaskModalStandalone } from './components/modals/AddTaskModalStandalone';
@@ -16,6 +17,8 @@ import { EditTodaysFocusModal } from './components/modals/EditTodaysFocusModal';
 import { EditGoalsModal } from './components/modals/EditGoalsModal';
 import { EditAreaGoalsModal } from './components/modals/EditAreaGoalsModal';
 import { EditAreaModal } from './components/modals/EditAreaModal';
+import { AddReminderModal } from './components/modals/AddReminderModal';
+import { EditReminderModal } from './components/modals/EditReminderModal';
 import { EmptyState } from './components/ui/EmptyState';
 import { ToastContainer, useToast } from './components/ui/Toast';
 import { DeleteConfirmModal } from './components/modals/DeleteConfirmModal';
@@ -48,8 +51,16 @@ interface FocusItem {
   areaIcon: string;
 }
 
+interface Reminder {
+  id: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+}
+
 export default function HomePage() {
   const [areas, setAreas] = useState<AreaWithCounts[]>([]);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddDomainModalOpen, setIsAddDomainModalOpen] = useState(false);
@@ -57,8 +68,13 @@ export default function HomePage() {
   const [isEditFocusModalOpen, setIsEditFocusModalOpen] = useState(false);
   const [isEditAreaGoalsModalOpen, setIsEditAreaGoalsModalOpen] = useState(false);
   const [isEditAreaModalOpen, setIsEditAreaModalOpen] = useState(false);
+  const [isAddReminderModalOpen, setIsAddReminderModalOpen] = useState(false);
+  const [isEditReminderModalOpen, setIsEditReminderModalOpen] = useState(false);
+  const [selectedReminder, setSelectedReminder] = useState<Reminder | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [reminderDeleteModalOpen, setReminderDeleteModalOpen] = useState(false);
   const [areaToDelete, setAreaToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [reminderToDelete, setReminderToDelete] = useState<{ id: string; title: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [todaysFocus, setTodaysFocus] = useState<FocusItem[]>([]);
   const [selectedAreaId, setSelectedAreaId] = useState<string>('');
@@ -77,6 +93,20 @@ export default function HomePage() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const fetchReminders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('reminders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setReminders(data || []);
+    } catch (error) {
+      console.error('Error fetching reminders:', error);
+    }
+  };
 
   const fetchAreas = async () => {
     try {
@@ -341,6 +371,45 @@ export default function HomePage() {
     }
   };
 
+  const handleReminderSuccess = () => {
+    fetchReminders();
+    showToast('Reminder saved successfully', 'success');
+  };
+
+  const handleDeleteReminderClick = (id: string, title: string) => {
+    setReminderToDelete({ id, title });
+    setReminderDeleteModalOpen(true);
+  };
+
+  const handleConfirmReminderDelete = async () => {
+    if (!reminderToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from('reminders')
+        .delete()
+        .eq('id', reminderToDelete.id);
+
+      if (error) throw error;
+
+      showToast(`"${reminderToDelete.title}" deleted`, 'success');
+      fetchReminders();
+    } catch (error) {
+      console.error('Error deleting reminder:', error);
+      showToast('Failed to delete reminder', 'error');
+    } finally {
+      setIsDeleting(false);
+      setReminderDeleteModalOpen(false);
+      setReminderToDelete(null);
+    }
+  };
+
+  const handleEditReminder = (reminder: Reminder) => {
+    setSelectedReminder(reminder);
+    setIsEditReminderModalOpen(true);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen">
@@ -436,6 +505,14 @@ export default function HomePage() {
             </div>
           </div>
         </motion.header>
+
+        {/* Important Reminders Card */}
+        <RemindersCard
+          reminders={reminders}
+          onAddReminder={() => setIsAddReminderModalOpen(true)}
+          onEditReminder={handleEditReminder}
+          onDeleteReminder={handleDeleteReminderClick}
+        />
 
         {/* Areas Grid */}
         {areas.length === 0 ? (
@@ -664,6 +741,36 @@ export default function HomePage() {
         title="Delete Area"
         message={`Are you sure you want to delete "${areaToDelete?.name}"? This will also delete all domains, projects, and items within this area. This action cannot be undone.`}
       />
+
+      <DeleteConfirmModal
+        isOpen={reminderDeleteModalOpen}
+        onClose={() => {
+          setReminderDeleteModalOpen(false);
+          setReminderToDelete(null);
+        }}
+        onConfirm={handleConfirmReminderDelete}
+        isDeleting={isDeleting}
+        title="Delete Reminder"
+        message={`Are you sure you want to delete "${reminderToDelete?.title}"? This action cannot be undone.`}
+      />
+
+      <AddReminderModal
+        isOpen={isAddReminderModalOpen}
+        onClose={() => setIsAddReminderModalOpen(false)}
+        onSuccess={handleReminderSuccess}
+      />
+
+      {selectedReminder && (
+        <EditReminderModal
+          isOpen={isEditReminderModalOpen}
+          onClose={() => {
+            setIsEditReminderModalOpen(false);
+            setSelectedReminder(null);
+          }}
+          onSuccess={handleReminderSuccess}
+          reminder={selectedReminder}
+        />
+      )}
 
       {/* Mobile Menu */}
       <MobileMenu
