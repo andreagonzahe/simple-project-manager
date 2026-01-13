@@ -110,7 +110,7 @@ export function RunningItemsCard() {
 
       if (tasks) {
         tasks.forEach((task: any) => {
-          // Get area from either direct link or through domain
+          // Get area from either direct link or through project
           const area = task.areas_of_life || task.projects?.areas_of_life;
           if (area) {
             allItems.push({
@@ -168,8 +168,8 @@ export function RunningItemsCard() {
 
       if (bugs) {
         bugs.forEach((bug: any) => {
-          // Get area from either direct link or through domain
-          const area = bug.areas_of_life || bug.domains?.areas_of_life;
+          // Get area from either direct link or through project
+          const area = bug.areas_of_life || bug.projects?.areas_of_life;
           if (area) {
             allItems.push({
               id: bug.id,
@@ -185,7 +185,7 @@ export function RunningItemsCard() {
               area_color: area.color,
               area_icon: area.icon,
               project_id: bug.project_id,
-              project_name: bug.domains?.name || null,
+              project_name: bug.projects?.name || null,
             });
           }
         });
@@ -226,8 +226,8 @@ export function RunningItemsCard() {
 
       if (features) {
         features.forEach((feature: any) => {
-          // Get area from either direct link or through domain
-          const area = feature.areas_of_life || feature.domains?.areas_of_life;
+          // Get area from either direct link or through project
+          const area = feature.areas_of_life || feature.projects?.areas_of_life;
           if (area) {
             allItems.push({
               id: feature.id,
@@ -243,7 +243,7 @@ export function RunningItemsCard() {
               area_color: area.color,
               area_icon: area.icon,
               project_id: feature.project_id,
-              project_name: feature.domains?.name || null,
+              project_name: feature.projects?.name || null,
             });
           }
         });
