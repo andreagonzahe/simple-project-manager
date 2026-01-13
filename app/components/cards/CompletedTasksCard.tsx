@@ -39,12 +39,12 @@ export function CompletedTasksCard() {
           title,
           updated_at,
           area_id,
-          domain_id,
+          project_id,
           areas_of_life!tasks_area_id_fkey (
             name,
             color
           ),
-          domains (
+          projects (
             name
           )
         `)
@@ -54,7 +54,7 @@ export function CompletedTasksCard() {
 
       if (tasks) {
         tasks.forEach((task: any) => {
-          const area = task.areas_of_life || task.domains?.areas_of_life;
+          const area = task.areas_of_life || task.projects?.areas_of_life;
           if (area) {
             allTasks.push({
               id: task.id,
@@ -62,7 +62,7 @@ export function CompletedTasksCard() {
               type: 'task',
               area_name: area.name,
               area_color: area.color,
-              project_name: task.domains?.name || null,
+              project_name: task.projects?.name || null,
               completed_date: task.updated_at,
             });
           }
@@ -77,12 +77,12 @@ export function CompletedTasksCard() {
           title,
           updated_at,
           area_id,
-          domain_id,
+          project_id,
           areas_of_life!bugs_area_id_fkey (
             name,
             color
           ),
-          domains (
+          projects (
             name
           )
         `)
@@ -92,7 +92,7 @@ export function CompletedTasksCard() {
 
       if (bugs) {
         bugs.forEach((bug: any) => {
-          const area = bug.areas_of_life || bug.domains?.areas_of_life;
+          const area = bug.areas_of_life || bug.projects?.areas_of_life;
           if (area) {
             allTasks.push({
               id: bug.id,
@@ -100,7 +100,7 @@ export function CompletedTasksCard() {
               type: 'bug',
               area_name: area.name,
               area_color: area.color,
-              project_name: bug.domains?.name || null,
+              project_name: bug.projects?.name || null,
               completed_date: bug.updated_at,
             });
           }
@@ -115,12 +115,12 @@ export function CompletedTasksCard() {
           title,
           updated_at,
           area_id,
-          domain_id,
+          project_id,
           areas_of_life!features_area_id_fkey (
             name,
             color
           ),
-          domains (
+          projects (
             name
           )
         `)
@@ -130,7 +130,7 @@ export function CompletedTasksCard() {
 
       if (features) {
         features.forEach((feature: any) => {
-          const area = feature.areas_of_life || feature.domains?.areas_of_life;
+          const area = feature.areas_of_life || feature.projects?.areas_of_life;
           if (area) {
             allTasks.push({
               id: feature.id,
@@ -138,7 +138,7 @@ export function CompletedTasksCard() {
               type: 'feature',
               area_name: area.name,
               area_color: area.color,
-              project_name: feature.domains?.name || null,
+              project_name: feature.projects?.name || null,
               completed_date: feature.updated_at,
             });
           }

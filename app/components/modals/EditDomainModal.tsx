@@ -53,7 +53,7 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
 
     try {
       const { error: updateError } = await supabase
-        .from('domains')
+        .from('projects')
         .update({
           name: formData.name,
           description: formData.description || null,

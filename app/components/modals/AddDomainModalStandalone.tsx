@@ -76,7 +76,7 @@ export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselect
 
     try {
       const { error: insertError } = await supabase
-        .from('domains')
+        .from('projects')
         .insert([formData as any]);
 
       if (insertError) throw insertError;

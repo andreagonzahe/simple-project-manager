@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Lock } from 'lucide-react';
 
@@ -8,9 +8,19 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get('from') || '/';
+
+  // Auto-focus the input on mount (client-side only)
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,26 +93,22 @@ function LoginForm() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <input
+                ref={inputRef}
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 placeholder="Enter password"
                 className="w-full px-6 py-4 rounded-2xl text-lg font-light outline-none transition-all"
                 style={{
                   background: 'rgba(255, 255, 255, 0.05)',
                   border: '1.5px solid rgba(255, 255, 255, 0.1)',
+                  borderColor: isFocused ? 'rgba(139, 92, 246, 0.5)' : 'rgba(255, 255, 255, 0.1)',
+                  boxShadow: isFocused ? '0 0 0 4px rgba(139, 92, 246, 0.1)' : 'none',
                   color: 'var(--color-text-primary)',
                 }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = 'rgba(139, 92, 246, 0.5)';
-                  e.target.style.boxShadow = '0 0 0 4px rgba(139, 92, 246, 0.1)';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.boxShadow = 'none';
-                }}
                 disabled={loading}
-                autoFocus
                 required
               />
             </div>
@@ -123,6 +129,8 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
               className="w-full px-6 py-4 rounded-2xl font-semibold text-lg transition-all"
               style={{
                 background: loading 
@@ -131,16 +139,8 @@ function LoginForm() {
                 border: '1.5px solid rgba(139, 92, 246, 0.4)',
                 color: 'var(--color-text-primary)',
                 cursor: loading ? 'not-allowed' : 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                if (!loading) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 12px 32px rgba(139, 92, 246, 0.4)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
+                transform: isHovered && !loading ? 'translateY(-2px)' : 'translateY(0)',
+                boxShadow: isHovered && !loading ? '0 12px 32px rgba(139, 92, 246, 0.4)' : 'none',
               }}
             >
               {loading ? 'Verifying...' : 'Unlock'}

@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowUpDown, Filter, Calendar, Tag, AlertCircle, CheckCircle2, Circle } from 'lucide-react';
+import { ArrowUpDown, Filter, Calendar, Tag, AlertCircle, CheckCircle2, Circle, Trash2 } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
+import { EditTaskModal } from '@/app/components/modals/EditTaskModal';
+import { DeleteConfirmModal } from '@/app/components/modals/DeleteConfirmModal';
+import type { ItemStatus, ItemPriority } from '@/app/lib/types';
 
 interface RunningItem {
   id: string;
@@ -19,7 +22,8 @@ interface RunningItem {
   area_name: string;
   area_color: string;
   area_icon: string;
-  subdomain_id: string;
+  project_id: string | null;
+  project_name: string | null;
 }
 
 type SortOption = 'date' | 'area' | 'type' | 'priority' | 'status' | 'due_date' | 'do_date';
@@ -38,6 +42,16 @@ export function RunningItemsCard() {
   const [filterArea, setFilterArea] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [areas, setAreas] = useState<Array<{ id: string; name: string }>>([]);
+  
+  // Edit modal state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<{ id: string; type: 'task' | 'bug' | 'feature' } | null>(null);
+  const [editTaskData, setEditTaskData] = useState<any>(null);
+  
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; type: 'task' | 'bug' | 'feature'; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchItems();
@@ -72,10 +86,11 @@ export function RunningItemsCard() {
           due_date,
           do_date,
           created_at,
-          domain_id,
+          project_id,
           area_id,
-          domains(
+          projects(
             id,
+            name,
             areas_of_life(
               id,
               name,
@@ -96,7 +111,7 @@ export function RunningItemsCard() {
       if (tasks) {
         tasks.forEach((task: any) => {
           // Get area from either direct link or through domain
-          const area = task.areas_of_life || task.domains?.areas_of_life;
+          const area = task.areas_of_life || task.projects?.areas_of_life;
           if (area) {
             allItems.push({
               id: task.id,
@@ -111,7 +126,8 @@ export function RunningItemsCard() {
               area_name: area.name,
               area_color: area.color,
               area_icon: area.icon,
-              subdomain_id: task.domain_id,
+              project_id: task.project_id,
+              project_name: task.projects?.name || null,
             });
           }
         });
@@ -128,10 +144,11 @@ export function RunningItemsCard() {
           due_date,
           do_date,
           created_at,
-          domain_id,
+          project_id,
           area_id,
-          domains(
+          projects(
             id,
+            name,
             areas_of_life(
               id,
               name,
@@ -167,7 +184,8 @@ export function RunningItemsCard() {
               area_name: area.name,
               area_color: area.color,
               area_icon: area.icon,
-              subdomain_id: bug.domain_id,
+              project_id: bug.project_id,
+              project_name: bug.domains?.name || null,
             });
           }
         });
@@ -184,10 +202,11 @@ export function RunningItemsCard() {
           due_date,
           do_date,
           created_at,
-          domain_id,
+          project_id,
           area_id,
-          domains(
+          projects(
             id,
+            name,
             areas_of_life(
               id,
               name,
@@ -223,7 +242,8 @@ export function RunningItemsCard() {
               area_name: area.name,
               area_color: area.color,
               area_icon: area.icon,
-              subdomain_id: feature.domain_id,
+              project_id: feature.project_id,
+              project_name: feature.domains?.name || null,
             });
           }
         });
@@ -321,6 +341,77 @@ export function RunningItemsCard() {
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join('');
+  };
+
+  const handleItemClick = async (item: RunningItem) => {
+    try {
+      // Fetch full task data
+      const tableName = item.type === 'task' ? 'tasks' : item.type === 'bug' ? 'bugs' : 'features';
+      const { data, error } = await supabase
+        .from(tableName)
+        .select('*')
+        .eq('id', item.id)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setEditTaskData({
+          title: data.title,
+          description: data.description,
+          status: data.status as ItemStatus,
+          priority: data.priority as ItemPriority,
+          due_date: data.due_date,
+          do_date: data.do_date,
+          severity: data.severity,
+          is_recurring: data.is_recurring,
+          recurrence_pattern: data.recurrence_pattern,
+          recurrence_end_date: data.recurrence_end_date,
+        });
+        setSelectedItem({ id: item.id, type: item.type });
+        setIsEditModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error fetching task data:', error);
+    }
+  };
+
+  const handleEditSuccess = () => {
+    setIsEditModalOpen(false);
+    setSelectedItem(null);
+    setEditTaskData(null);
+    fetchItems(); // Refresh the list
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, item: RunningItem) => {
+    e.stopPropagation(); // Prevent opening edit modal
+    setItemToDelete({ id: item.id, type: item.type, title: item.title });
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const tableName = itemToDelete.type === 'task' ? 'tasks' : 
+                       itemToDelete.type === 'bug' ? 'bugs' : 'features';
+      
+      const { error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq('id', itemToDelete.id);
+
+      if (error) throw error;
+
+      setIsDeleteModalOpen(false);
+      setItemToDelete(null);
+      fetchItems(); // Refresh the list
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -498,8 +589,19 @@ export function RunningItemsCard() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03 }}
-                className="glass glass-hover rounded-xl p-4 cursor-pointer transition-all"
+                onClick={() => handleItemClick(item)}
+                className="glass glass-hover rounded-xl p-4 cursor-pointer transition-all relative group"
               >
+                {/* Delete Button - appears on hover */}
+                <button
+                  onClick={(e) => handleDeleteClick(e, item)}
+                  className="absolute top-3 right-3 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/20 z-10"
+                  style={{ color: '#EF4444' }}
+                  title="Delete task"
+                >
+                  <Trash2 size={16} strokeWidth={2} />
+                </button>
+
                 {/* Item Header */}
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -509,12 +611,19 @@ export function RunningItemsCard() {
                     >
                       <AreaIcon size={14} style={{ color: item.area_color }} strokeWidth={2} />
                     </div>
-                    <span className="text-xs font-medium truncate" style={{ color: 'var(--color-text-tertiary)' }}>
-                      {item.area_name}
-                    </span>
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="text-xs font-medium truncate" style={{ color: 'var(--color-text-tertiary)' }}>
+                        {item.area_name}
+                      </span>
+                      {item.project_name && (
+                        <span className="text-xs font-light truncate" style={{ color: 'var(--color-text-tertiary)', opacity: 0.7 }}>
+                          {item.project_name}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div 
-                    className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium"
+                    className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium flex-shrink-0"
                     style={{ 
                       color: getPriorityColor(item.priority),
                       background: `${getPriorityColor(item.priority)}20`
@@ -559,6 +668,35 @@ export function RunningItemsCard() {
           })
         )}
       </div>
+
+      {/* Edit Task Modal */}
+      {selectedItem && editTaskData && (
+        <EditTaskModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedItem(null);
+            setEditTaskData(null);
+          }}
+          onSuccess={handleEditSuccess}
+          taskId={selectedItem.id}
+          taskType={selectedItem.type}
+          initialData={editTaskData}
+        />
+      )}
+
+      {/* Delete Confirm Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setItemToDelete(null);
+        }}
+        onConfirm={handleDeleteConfirm}
+        isDeleting={isDeleting}
+        title="Delete Task"
+        message={`Are you sure you want to delete "${itemToDelete?.title}"? This action cannot be undone.`}
+      />
     </motion.div>
   );
 }

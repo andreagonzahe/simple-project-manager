@@ -57,8 +57,8 @@ export default function CalendarPage() {
           priority,
           due_date,
           do_date,
-          domain_id,
-          domains!inner(name, area_id, areas_of_life!inner(name, color))
+          project_id,
+          projects!inner(name, area_id, areas_of_life!inner(name, color))
         `)
         .gte('due_date', startDate)
         .lte('due_date', endDate)
@@ -74,8 +74,8 @@ export default function CalendarPage() {
           priority,
           due_date,
           do_date,
-          domain_id,
-          domains!inner(name, area_id, areas_of_life!inner(name, color))
+          project_id,
+          projects!inner(name, area_id, areas_of_life!inner(name, color))
         `)
         .gte('due_date', startDate)
         .lte('due_date', endDate)
@@ -91,8 +91,8 @@ export default function CalendarPage() {
           priority,
           due_date,
           do_date,
-          domain_id,
-          domains!inner(name, area_id, areas_of_life!inner(name, color))
+          project_id,
+          projects!inner(name, area_id, areas_of_life!inner(name, color))
         `)
         .gte('due_date', startDate)
         .lte('due_date', endDate)

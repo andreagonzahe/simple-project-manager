@@ -1,78 +1,79 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-import type { ItemStatus, ItemPriority, BugSeverity } from './types';
+// Utility functions
 
 /**
- * Merge Tailwind classes with clsx
+ * Capitalize the first letter of a string
  */
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export function capitalize(str: string): string {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 /**
- * Get color for status
+ * Get color for a status value
  */
-export function getStatusColor(status?: ItemStatus): string {
+export function getStatusColor(status: string): string {
   switch (status) {
     case 'backlog':
-      return '#6B7280'; // Gray
+      return '#6B7280';
     case 'idea':
-      return '#A78BFA'; // Purple
+      return '#8B5CF6';
     case 'idea_validation':
-      return '#818CF8'; // Indigo
+      return '#A78BFA';
     case 'exploration':
-      return '#60A5FA'; // Light Blue
+      return '#3B82F6';
     case 'planning':
-      return '#34D399'; // Emerald
+      return '#0EA5E9';
     case 'executing':
-      return '#FBBF24'; // Amber
+      return '#F59E0B';
     case 'complete':
-      return '#10B981'; // Green
+      return '#10B981';
     case 'dismissed':
-      return '#9CA3AF'; // Gray
+      return '#EF4444';
     default:
       return '#6B7280';
   }
 }
 
 /**
- * Get color for priority
+ * Get color for a priority value
  */
-export function getPriorityColor(priority?: ItemPriority): string {
-  switch (priority) {
-    case 'low':
-      return '#9CA3AF'; // Light gray
-    case 'medium':
-      return '#F59E0B'; // Yellow
-    case 'high':
-      return '#EF4444'; // Red
-    default:
-      return '#9CA3AF';
-  }
-}
-
-/**
- * Get color for bug severity
- */
-export function getSeverityColor(severity?: BugSeverity): string {
-  switch (severity) {
-    case 'minor':
-      return '#FBBF24'; // Yellow
-    case 'major':
-      return '#F97316'; // Orange
+export function getPriorityColor(priority: string): string {
+  switch (priority?.toLowerCase()) {
     case 'critical':
-      return '#DC2626'; // Dark red
+      return '#EF4444';
+    case 'high':
+      return '#F97316';
+    case 'medium':
+      return '#F59E0B';
+    case 'low':
+      return '#10B981';
     default:
-      return '#FBBF24';
+      return '#6B7280';
   }
 }
 
 /**
- * Format date to readable string
+ * Get color for a severity value (for bugs)
  */
-export function formatDate(date?: string): string {
-  if (!date) return 'Not set';
-  return new Date(date).toLocaleDateString('en-US', {
+export function getSeverityColor(severity: string): string {
+  switch (severity?.toLowerCase()) {
+    case 'critical':
+      return '#EF4444';
+    case 'major':
+      return '#F97316';
+    case 'minor':
+      return '#F59E0B';
+    default:
+      return '#6B7280';
+  }
+}
+
+/**
+ * Format a date string to a more readable format
+ */
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -80,123 +81,90 @@ export function formatDate(date?: string): string {
 }
 
 /**
- * Format date to relative time (e.g., "2 days ago")
+ * Truncate a string to a maximum length
  */
-export function formatRelativeTime(date?: string): string {
-  if (!date) return 'Never';
+export function truncate(str: string, maxLength: number): string {
+  if (str.length <= maxLength) return str;
+  return str.slice(0, maxLength) + '...';
+}
+
+/**
+ * Calculate the next due date for a recurring task based on the recurrence pattern
+ */
+export function calculateNextDueDate(
+  currentDate: Date,
+  pattern: 'daily' | 'weekly' | 'monthly' | 'yearly'
+): Date {
+  const nextDate = new Date(currentDate);
   
-  const now = new Date();
-  const past = new Date(date);
-  const diffMs = now.getTime() - past.getTime();
-  const diffSeconds = Math.floor(diffMs / 1000);
-  const diffMinutes = Math.floor(diffSeconds / 60);
-  const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffSeconds < 60) return 'Just now';
-  if (diffMinutes < 60) return `${diffMinutes}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  switch (pattern) {
+    case 'daily':
+      nextDate.setDate(nextDate.getDate() + 1);
+      break;
+    case 'weekly':
+      nextDate.setDate(nextDate.getDate() + 7);
+      break;
+    case 'monthly':
+      nextDate.setMonth(nextDate.getMonth() + 1);
+      break;
+    case 'yearly':
+      nextDate.setFullYear(nextDate.getFullYear() + 1);
+      break;
+  }
   
-  return formatDate(date);
+  return nextDate;
 }
 
 /**
- * Capitalize first letter of string
+ * Handle completing a recurring task
+ * Returns the update data for the task
  */
-export function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
+export async function handleRecurringTaskCompletion(
+  task: {
+    is_recurring?: boolean;
+    recurrence_pattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+    recurrence_end_date?: string;
+    next_due_date?: string;
+  },
+  completionDate: Date = new Date()
+): Promise<{
+  status: string;
+  last_completed_date: string;
+  next_due_date: string | null;
+  date_completed?: string | null;
+}> {
+  // If not recurring, just mark as complete
+  if (!task.is_recurring || !task.recurrence_pattern) {
+    return {
+      status: 'complete',
+      last_completed_date: completionDate.toISOString().split('T')[0],
+      next_due_date: null,
+      date_completed: completionDate.toISOString().split('T')[0],
+    };
+  }
 
-/**
- * Truncate text with ellipsis
- */
-export function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
-}
+  // Calculate next due date
+  const nextDue = calculateNextDueDate(completionDate, task.recurrence_pattern);
+  
+  // Check if we've passed the end date
+  if (task.recurrence_end_date) {
+    const endDate = new Date(task.recurrence_end_date);
+    if (nextDue > endDate) {
+      // End date reached, mark as complete
+      return {
+        status: 'complete',
+        last_completed_date: completionDate.toISOString().split('T')[0],
+        next_due_date: null,
+        date_completed: completionDate.toISOString().split('T')[0],
+      };
+    }
+  }
 
-/**
- * Calculate completion percentage for a list of items
- */
-export function calculateCompletion(total: number, completed: number): number {
-  if (total === 0) return 0;
-  return Math.round((completed / total) * 100);
-}
-
-/**
- * Sort comparator function for items
- */
-export function sortByField<T>(field: keyof T, ascending: boolean = true) {
-  return (a: T, b: T) => {
-    const aVal = a[field];
-    const bVal = b[field];
-    
-    if (aVal === bVal) return 0;
-    if (aVal === null || aVal === undefined) return 1;
-    if (bVal === null || bVal === undefined) return -1;
-    
-    const comparison = aVal < bVal ? -1 : 1;
-    return ascending ? comparison : -comparison;
+  // Task continues recurring
+  return {
+    status: 'backlog', // Reset to backlog for next occurrence
+    last_completed_date: completionDate.toISOString().split('T')[0],
+    next_due_date: nextDue.toISOString().split('T')[0],
+    date_completed: null, // Clear date_completed since task continues
   };
 }
-
-/**
- * Get icon name from lucide-react based on area name
- */
-export function getDefaultIcon(areaName: string): string {
-  const iconMap: Record<string, string> = {
-    'Career': 'Briefcase',
-    'Housing': 'Home',
-    'Health': 'Heart',
-    'Immigration': 'Plane',
-    'Personal': 'User',
-  };
-  return iconMap[areaName] || 'Circle';
-}
-
-/**
- * Validate hex color
- */
-export function isValidHexColor(color: string): boolean {
-  return /^#[0-9A-F]{6}$/i.test(color);
-}
-
-/**
- * Generate a random pastel color
- */
-export function generatePastelColor(): string {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 70%, 60%)`;
-}
-
-/**
- * Local storage helpers with type safety
- */
-export const storage = {
-  get: <T>(key: string, defaultValue: T): T => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : defaultValue;
-    } catch {
-      return defaultValue;
-    }
-  },
-  set: <T>(key: string, value: T): void => {
-    if (typeof window === 'undefined') return;
-    try {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error('Failed to save to localStorage:', error);
-    }
-  },
-  remove: (key: string): void => {
-    if (typeof window === 'undefined') return;
-    try {
-      window.localStorage.removeItem(key);
-    } catch (error) {
-      console.error('Failed to remove from localStorage:', error);
-    }
-  },
-};

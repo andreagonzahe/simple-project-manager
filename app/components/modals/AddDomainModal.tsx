@@ -39,7 +39,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
 
     try {
       const { error: insertError } = await supabase
-        .from('domains')
+        .from('projects')
         .insert([{ ...formData, area_id: areaId } as any]);
 
       if (insertError) throw insertError;

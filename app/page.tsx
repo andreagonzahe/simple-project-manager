@@ -9,6 +9,7 @@ import { AreaCard } from './components/cards/AreaCard';
 import { SortableAreaCard } from './components/cards/SortableAreaCard';
 import { RunningItemsCard } from './components/cards/RunningItemsCard';
 import { RunningProjectsCard } from './components/cards/RunningProjectsCard';
+import { TodaysFocusCard } from './components/cards/TodaysFocusCard';
 import { RemindersCard } from './components/cards/RemindersCard';
 import { CompletedTasksCard } from './components/cards/CompletedTasksCard';
 import { AddAreaModal } from './components/modals/AddAreaModal';
@@ -135,25 +136,25 @@ export default function HomePage() {
 
       const areasWithCounts = await Promise.all(
         (areasData || []).map(async (area) => {
-          // Get domain count
-          const { count: domainCount } = await supabase
-            .from('domains')
+          // Get project count
+          const { count: projectCount } = await supabase
+            .from('projects')
             .select('*', { count: 'exact', head: true })
             .eq('area_id', area.id);
 
-          // Get domains to calculate total items
-          const { data: domains } = await supabase
-            .from('domains')
+          // Get projects to calculate total items
+          const { data: projects } = await supabase
+            .from('projects')
             .select('id')
             .eq('area_id', area.id);
 
           let totalItems = 0;
-          if (domains) {
-            for (const domain of domains) {
+          if (projects) {
+            for (const project of projects) {
               const [features, bugs, tasks] = await Promise.all([
-                supabase.from('features').select('*', { count: 'exact', head: true }).eq('domain_id', domain.id),
-                supabase.from('bugs').select('*', { count: 'exact', head: true }).eq('domain_id', domain.id),
-                supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('domain_id', domain.id),
+                supabase.from('features').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
+                supabase.from('bugs').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
+                supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
               ]);
               totalItems += (features.count || 0) + (bugs.count || 0) + (tasks.count || 0);
             }
@@ -161,7 +162,7 @@ export default function HomePage() {
 
           return {
             ...area,
-            domainCount: domainCount || 0,
+            projectCount: projectCount || 0,
             totalItems,
           };
         })
@@ -524,6 +525,12 @@ export default function HomePage() {
           </div>
         </motion.header>
 
+        {/* Today's Focus Card */}
+        <TodaysFocusCard
+          todaysFocus={todaysFocus}
+          onEditFocus={() => setIsEditFocusModalOpen(true)}
+        />
+
         {/* Important Reminders Card */}
         <RemindersCard
           reminders={reminders}
@@ -531,6 +538,12 @@ export default function HomePage() {
           onEditReminder={handleEditReminder}
           onDeleteReminder={handleDeleteReminderClick}
         />
+
+        {/* Running Items Card */}
+        <RunningItemsCard />
+
+        {/* Spacer for breathing room */}
+        <div className="h-8 sm:h-10 lg:h-12"></div>
 
         {/* Areas Grid */}
         {areas.length === 0 ? (
@@ -553,6 +566,16 @@ export default function HomePage() {
             <div className="flex flex-col xl:flex-row gap-6 sm:gap-8 items-start">
               {/* Left Column - Areas Grid */}
               <div className="flex-1 w-full">
+                {/* All Areas Header */}
+                <motion.h2 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-2xl sm:text-3xl font-bold tracking-tight mb-6 sm:mb-8" 
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  All Areas
+                </motion.h2>
+                
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -588,104 +611,8 @@ export default function HomePage() {
                 </DndContext>
               </div>
 
-              {/* Right Column - Today's Focus + Running Items (XL+ sidebar, mobile full-width) */}
+              {/* Right Column - Running Items (XL+ sidebar, mobile full-width) */}
               <div className="w-full xl:w-[400px] space-y-4 sm:space-y-6">
-                {/* Today's Focus - Compact Version */}
-                <motion.section
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="relative"
-                >
-                  {/* Dark gradient background for distinction */}
-                  <div 
-                    className="absolute inset-0 rounded-3xl opacity-50"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(155, 110, 255, 0.15), rgba(255, 159, 202, 0.15))',
-                    }}
-                  />
-                  
-                  <div className="relative glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border-2" style={{ borderColor: 'rgba(155, 110, 255, 0.25)' }}>
-                    <div className="flex items-center justify-between mb-4 sm:mb-6">
-                      <h2 className="text-lg sm:text-xl font-bold tracking-tight" style={{ color: 'var(--color-text-primary)' }}>
-                        Today's Focus
-                      </h2>
-                      <button
-                        onClick={() => setIsEditFocusModalOpen(true)}
-                        className="px-2.5 sm:px-3 py-1.5 sm:py-2 glass glass-hover rounded-lg sm:rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 sm:gap-2"
-                        style={{ color: 'var(--color-text-primary)' }}
-                      >
-                        <Edit3 size={14} strokeWidth={2.5} />
-                        <span>Edit</span>
-                      </button>
-                    </div>
-
-                    {todaysFocus.length === 0 ? (
-                      <div className="text-center py-6 sm:py-8">
-                        <p className="text-xs sm:text-sm mb-3 sm:mb-4" style={{ color: 'var(--color-text-secondary)' }}>
-                          No focus domains yet. Add up to 3.
-                        </p>
-                        <button
-                          onClick={() => setIsEditFocusModalOpen(true)}
-                          className="px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl transition-all font-medium inline-flex items-center gap-2 text-xs sm:text-sm"
-                          style={{
-                            background: 'linear-gradient(135deg, rgba(123, 159, 255, 0.8), rgba(155, 110, 255, 0.8))',
-                            color: 'white',
-                          }}
-                        >
-                          <Plus size={14} strokeWidth={2.5} className="sm:w-4 sm:h-4" />
-                          Add Domains
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-2 sm:space-y-3">
-                        {todaysFocus.map((item) => {
-                          // Convert icon name to PascalCase
-                          const convertIconName = (iconName: string) => {
-                            if (!iconName) return null;
-                            return iconName
-                              .split('-')
-                              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                              .join('');
-                          };
-
-                          const iconName = convertIconName(item.areaIcon || '');
-                          const IconComponent = iconName && (Icons as any)[iconName]
-                            ? (Icons as any)[iconName]
-                            : Icons.Circle;
-
-                          return (
-                            <Link
-                              key={item.id}
-                              href={`/projects/${item.areaId}`}
-                              className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 glass glass-hover rounded-xl sm:rounded-2xl transition-all"
-                            >
-                              <div 
-                                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0" 
-                                style={{ 
-                                  background: `linear-gradient(135deg, ${item.areaColor}25, ${item.areaColor}15)`,
-                                  border: `1.5px solid ${item.areaColor}35`,
-                                  boxShadow: `0 4px 16px ${item.areaColor}20`,
-                                }}
-                              >
-                                <IconComponent size={18} style={{ color: item.areaColor }} strokeWidth={2.5} className="sm:w-5 sm:h-5" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <span className="font-semibold text-xs sm:text-sm block" style={{ color: 'var(--color-text-primary)' }}>
-                                  {item.areaName}
-                                </span>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </motion.section>
-
-                {/* Running Items Card */}
-                <RunningItemsCard />
-
                 {/* Running Projects Card */}
                 <RunningProjectsCard />
 

@@ -85,7 +85,7 @@ export default function DomainDetailPage() {
 
       // Fetch domain
       const { data: domainData, error: domainError } = await supabase
-        .from('domains')
+        .from('projects')
         .select('*')
         .eq('id', domainId)
         .single();
@@ -113,7 +113,7 @@ export default function DomainDetailPage() {
     const { data: tasksData } = await supabase
       .from('tasks')
       .select('*')
-      .eq('domain_id', domainId);
+      .eq('project_id', domainId);
 
     if (tasksData) {
       allTasks.push(...tasksData.map(t => ({ ...t, type: 'task' as const })));
@@ -123,7 +123,7 @@ export default function DomainDetailPage() {
     const { data: bugsData } = await supabase
       .from('bugs')
       .select('*')
-      .eq('domain_id', domainId);
+      .eq('project_id', domainId);
 
     if (bugsData) {
       allTasks.push(...bugsData.map(b => ({ ...b, type: 'bug' as const })));
@@ -133,7 +133,7 @@ export default function DomainDetailPage() {
     const { data: featuresData } = await supabase
       .from('features')
       .select('*')
-      .eq('domain_id', domainId);
+      .eq('project_id', domainId);
 
     if (featuresData) {
       allTasks.push(...featuresData.map(f => ({ ...f, type: 'feature' as const })));
@@ -632,7 +632,7 @@ export default function DomainDetailPage() {
         onClose={() => setIsAddTaskModalOpen(false)}
         onSuccess={handleTaskSuccess}
         preselectedAreaId={areaId}
-        preselectedDomainId={domainId}
+        preselectedProjectId={domainId}
       />
 
       {/* Edit Task Modal */}

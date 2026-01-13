@@ -50,7 +50,7 @@ export function EditGoalsModal({ isOpen, onClose, onSuccess, domainId, domainNam
       const validGoals = goals.filter(goal => goal.trim().length > 0);
 
       const { error: updateError } = await supabase
-        .from('domains')
+        .from('projects')
         .update({ goals: validGoals })
         .eq('id', domainId);
 

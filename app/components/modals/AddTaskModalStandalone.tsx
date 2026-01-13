@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
-import type { AreaOfLife, Domain } from '@/app/lib/types';
+import type { AreaOfLife, Project } from '@/app/lib/types';
 import { supabase } from '@/app/lib/supabase';
 
 interface AddTaskModalStandaloneProps {
@@ -10,15 +10,15 @@ interface AddTaskModalStandaloneProps {
   onClose: () => void;
   onSuccess: () => void;
   preselectedAreaId?: string;
-  preselectedDomainId?: string;
+  preselectedProjectId?: string;
 }
 
-export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselectedAreaId, preselectedDomainId }: AddTaskModalStandaloneProps) {
+export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselectedAreaId, preselectedProjectId }: AddTaskModalStandaloneProps) {
   const [areas, setAreas] = useState<AreaOfLife[]>([]);
-  const [domains, setDomains] = useState<Domain[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   
   const [selectedAreaId, setSelectedAreaId] = useState(preselectedAreaId || '');
-  const [selectedDomainId, setSelectedDomainId] = useState(preselectedDomainId || '');
+  const [selectedProjectId, setSelectedProjectId] = useState(preselectedProjectId || '');
   
   const [formData, setFormData] = useState({
     type: 'task' as 'task' | 'bug' | 'feature',
@@ -29,6 +29,9 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
     severity: 'minor' as 'minor' | 'major' | 'critical', // Only for bugs
     due_date: '',
     do_date: '',
+    is_recurring: false,
+    recurrence_pattern: 'daily' as 'daily' | 'weekly' | 'monthly' | 'yearly',
+    recurrence_end_date: '',
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,19 +45,19 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
       if (preselectedAreaId) {
         setSelectedAreaId(preselectedAreaId);
       }
-      if (preselectedDomainId) {
-        setSelectedDomainId(preselectedDomainId);
+      if (preselectedProjectId) {
+        setSelectedProjectId(preselectedProjectId);
       }
     }
-  }, [isOpen, preselectedAreaId, preselectedDomainId]);
+  }, [isOpen, preselectedAreaId, preselectedProjectId]);
 
-  // Fetch domains when area changes
+  // Fetch projects when area changes
   useEffect(() => {
     if (selectedAreaId) {
-      fetchDomains(selectedAreaId);
+      fetchProjects(selectedAreaId);
     } else {
-      setDomains([]);
-      setSelectedDomainId('');
+      setProjects([]);
+      setSelectedProjectId('');
     }
   }, [selectedAreaId]);
 
@@ -72,16 +75,16 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
     }
   };
 
-  const fetchDomains = async (areaId: string) => {
+  const fetchProjects = async (areaId: string) => {
     try {
       const { data, error } = await supabase
-        .from('domains')
+        .from('projects')
         .select('*')
         .eq('area_id', areaId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setDomains(data || []);
+      setProjects(data || []);
     } catch (err) {
       console.error('Error fetching domains:', err);
     }
@@ -101,7 +104,7 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
 
     try {
       const baseData = {
-        domain_id: selectedDomainId || null,
+        project_id: selectedProjectId || null,
         area_id: selectedAreaId,
         title: formData.title,
         description: formData.description || null,
@@ -109,6 +112,10 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
         status: formData.status,
         due_date: formData.due_date || null,
         do_date: formData.do_date || null,
+        is_recurring: formData.is_recurring,
+        recurrence_pattern: formData.is_recurring ? formData.recurrence_pattern : null,
+        recurrence_end_date: formData.is_recurring && formData.recurrence_end_date ? formData.recurrence_end_date : null,
+        next_due_date: formData.is_recurring && formData.do_date ? formData.do_date : null,
       };
 
 
@@ -145,9 +152,12 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
         severity: 'minor',
         due_date: '',
         do_date: '',
+        is_recurring: false,
+        recurrence_pattern: 'daily',
+        recurrence_end_date: '',
       });
       setSelectedAreaId('');
-      setSelectedDomainId('');
+      setSelectedProjectId('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create item');
     } finally {
@@ -225,22 +235,22 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
           </select>
         </div>
 
-        {/* Domain Selection */}
+        {/* Project Selection */}
         {selectedAreaId && (
           <div>
-            <label htmlFor="domain" className="block text-sm font-medium mb-3 text-white">
+            <label htmlFor="project" className="block text-sm font-medium mb-3 text-white">
               Project (Optional)
             </label>
             <select
-              id="domain"
-              value={selectedDomainId}
-              onChange={(e) => setSelectedDomainId(e.target.value)}
+              id="project"
+              value={selectedProjectId}
+              onChange={(e) => setSelectedProjectId(e.target.value)}
               className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">No project (area only)</option>
-              {domains.map((domain) => (
-                <option key={domain.id} value={domain.id} className="bg-gray-800">
-                  {domain.name}
+              {projects.map((project) => (
+                <option key={project.id} value={project.id} className="bg-gray-800">
+                  {project.name}
                 </option>
               ))}
             </select>
@@ -372,6 +382,59 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
               className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+        </div>
+
+        {/* Recurring Task Section */}
+        <div className="glass rounded-2xl p-5 border" style={{ borderColor: 'rgba(139, 92, 246, 0.3)' }}>
+          <div className="flex items-center gap-3 mb-4">
+            <input
+              type="checkbox"
+              id="is_recurring"
+              checked={formData.is_recurring}
+              onChange={(e) => setFormData({ ...formData, is_recurring: e.target.checked })}
+              className="w-5 h-5 rounded bg-gray-700 border-gray-600 text-purple-500 focus:ring-purple-500"
+            />
+            <label htmlFor="is_recurring" className="text-sm font-medium text-white cursor-pointer">
+              Make this a recurring task
+            </label>
+          </div>
+
+          {formData.is_recurring && (
+            <div className="space-y-4 mt-4 pt-4 border-t border-white/10">
+              <div>
+                <label htmlFor="recurrence_pattern" className="block text-sm font-medium mb-3 text-white">
+                  Repeat
+                </label>
+                <select
+                  id="recurrence_pattern"
+                  value={formData.recurrence_pattern}
+                  onChange={(e) => setFormData({ ...formData, recurrence_pattern: e.target.value as any })}
+                  className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="daily" className="bg-gray-800">Daily</option>
+                  <option value="weekly" className="bg-gray-800">Weekly</option>
+                  <option value="monthly" className="bg-gray-800">Monthly</option>
+                  <option value="yearly" className="bg-gray-800">Yearly</option>
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="recurrence_end_date" className="block text-sm font-medium mb-3 text-white">
+                  End Date (Optional)
+                </label>
+                <input
+                  type="date"
+                  id="recurrence_end_date"
+                  value={formData.recurrence_end_date}
+                  onChange={(e) => setFormData({ ...formData, recurrence_end_date: e.target.value })}
+                  className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="text-xs mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
+                  Leave blank for tasks that repeat indefinitely
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Actions */}

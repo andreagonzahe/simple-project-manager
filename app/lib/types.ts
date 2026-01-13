@@ -2,8 +2,9 @@
 export type ItemStatus = 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed';
 export type ItemPriority = 'low' | 'medium' | 'high' | 'critical';
 export type BugSeverity = 'minor' | 'major' | 'critical';
+export type RecurrencePattern = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
-// Simplified Hierarchy: Domain -> Project -> Task
+// Simplified Hierarchy: Area -> Project -> Task
 
 // Database table types
 export interface AreaOfLife {
@@ -18,7 +19,7 @@ export interface AreaOfLife {
   updated_at: string;
 }
 
-export interface Domain {
+export interface Project {
   id: string;
   area_id: string;
   name: string;
@@ -32,7 +33,8 @@ export interface Domain {
 
 export interface Feature {
   id: string;
-  domain_id: string;
+  project_id: string | null;
+  area_id: string | null;
   title: string;
   description?: string;
   status: ItemStatus;
@@ -41,13 +43,19 @@ export interface Feature {
   do_date?: string;
   date_started?: string;
   date_completed?: string;
+  is_recurring?: boolean;
+  recurrence_pattern?: RecurrencePattern;
+  recurrence_end_date?: string;
+  last_completed_date?: string;
+  next_due_date?: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface Bug {
   id: string;
-  domain_id: string;
+  project_id: string | null;
+  area_id: string | null;
   title: string;
   description?: string;
   status: ItemStatus;
@@ -57,13 +65,19 @@ export interface Bug {
   do_date?: string;
   date_started?: string;
   date_completed?: string;
+  is_recurring?: boolean;
+  recurrence_pattern?: RecurrencePattern;
+  recurrence_end_date?: string;
+  last_completed_date?: string;
+  next_due_date?: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface Task {
   id: string;
-  domain_id: string;
+  project_id: string | null;
+  area_id: string | null;
   title: string;
   description?: string;
   status: ItemStatus;
@@ -72,17 +86,22 @@ export interface Task {
   do_date?: string;
   date_started?: string;
   date_completed?: string;
+  is_recurring?: boolean;
+  recurrence_pattern?: RecurrencePattern;
+  recurrence_end_date?: string;
+  last_completed_date?: string;
+  next_due_date?: string;
   created_at: string;
   updated_at: string;
 }
 
 // Extended types with counts for UI
 export interface AreaWithCounts extends AreaOfLife {
-  domainCount: number;
+  projectCount: number;
   totalItems: number;
 }
 
-export interface DomainWithCounts extends Domain {
+export interface ProjectWithCounts extends Project {
   taskCount: number;
   activeItems: number;
 }
@@ -96,7 +115,7 @@ export interface AreaFormData {
   sort_order: number;
 }
 
-export interface DomainFormData {
+export interface ProjectFormData {
   area_id: string;
   name: string;
   description?: string;
@@ -113,3 +132,8 @@ export interface ItemFormData {
   due_date?: string;
   do_date?: string;
 }
+
+// Union type for all item types
+export type ItemUnion = (Task & { item_type: 'task' }) | 
+                        (Bug & { item_type: 'bug' }) | 
+                        (Feature & { item_type: 'feature' });

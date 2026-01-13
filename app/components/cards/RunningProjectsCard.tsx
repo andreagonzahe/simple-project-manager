@@ -44,7 +44,7 @@ export function RunningProjectsCard() {
 
       // Fetch active projects (not complete or dismissed)
       const { data: projectsData } = await supabase
-        .from('domains')
+        .from('projects')
         .select(`
           id,
           name,
@@ -70,15 +70,15 @@ export function RunningProjectsCard() {
               supabase
                 .from('tasks')
                 .select('*', { count: 'exact', head: true })
-                .eq('domain_id', project.id),
+                .eq('project_id', project.id),
               supabase
                 .from('bugs')
                 .select('*', { count: 'exact', head: true })
-                .eq('domain_id', project.id),
+                .eq('project_id', project.id),
               supabase
                 .from('features')
                 .select('*', { count: 'exact', head: true })
-                .eq('domain_id', project.id),
+                .eq('project_id', project.id),
             ]);
 
             const totalTasks = (tasks.count || 0) + (bugs.count || 0) + (features.count || 0);
@@ -88,17 +88,17 @@ export function RunningProjectsCard() {
               supabase
                 .from('tasks')
                 .select('*', { count: 'exact', head: true })
-                .eq('domain_id', project.id)
+                .eq('project_id', project.id)
                 .not('status', 'in', '(complete,dismissed)'),
               supabase
                 .from('bugs')
                 .select('*', { count: 'exact', head: true })
-                .eq('domain_id', project.id)
+                .eq('project_id', project.id)
                 .not('status', 'in', '(complete,dismissed)'),
               supabase
                 .from('features')
                 .select('*', { count: 'exact', head: true })
-                .eq('domain_id', project.id)
+                .eq('project_id', project.id)
                 .not('status', 'in', '(complete,dismissed)'),
             ]);
 
