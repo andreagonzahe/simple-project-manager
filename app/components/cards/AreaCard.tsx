@@ -194,7 +194,7 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
         </div>
       )}
 
-      {area.domainCount === 0 && (
+      {area.projectCount === 0 && (
         <div className="text-sm sm:text-base font-light mb-6 sm:mb-8 lg:mb-12 flex items-center gap-1.5 sm:gap-2" style={{ color: 'var(--color-text-tertiary)' }}>
           <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ background: area.color, opacity: 0.5 }}></span>
           No projects yet
