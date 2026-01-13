@@ -161,7 +161,7 @@ export function AreaCard({ area, onDelete, onAddProject, onEditGoals, onEdit, is
           </h3>
           <div className="space-y-0.5 sm:space-y-1">
             <div className="text-base sm:text-lg lg:text-xl font-light" style={{ color: 'var(--color-text-secondary)' }}>
-              {area.domainCount} {area.domainCount === 1 ? 'project' : 'projects'}
+              {area.projectCount} {area.projectCount === 1 ? 'project' : 'projects'}
             </div>
             {area.totalItems > 0 && (
               <div className="text-sm sm:text-base font-light" style={{ color: 'var(--color-text-tertiary)' }}>
