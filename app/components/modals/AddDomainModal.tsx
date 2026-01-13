@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Modal } from './Modal';
-import type { DomainFormData } from '@/app/lib/types';
+import type { ProjectFormData } from '@/app/lib/types';
 import { supabase } from '@/app/lib/supabase';
 
 interface AddDomainModalProps {
@@ -22,7 +22,7 @@ const defaultColors = [
 ];
 
 export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomainModalProps) {
-  const [formData, setFormData] = useState<DomainFormData>({
+  const [formData, setFormData] = useState<ProjectFormData>({
     area_id: areaId,
     name: '',
     description: '',

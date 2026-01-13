@@ -2,16 +2,16 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import type { DomainWithCounts } from '@/app/lib/types';
+import type { ProjectWithCounts } from '@/app/lib/types';
 import { ChevronRight, Edit2, Target, Trash2 } from 'lucide-react';
 import { StatusBadge } from '../badges/StatusBadge';
 
 interface DomainCardProps {
-  domain: DomainWithCounts;
+  domain: ProjectWithCounts;
   areaId: string;
-  onEdit?: (domain: DomainWithCounts) => void;
-  onEditGoals?: (domain: DomainWithCounts) => void;
-  onDelete?: (domain: DomainWithCounts) => void;
+  onEdit?: (domain: ProjectWithCounts) => void;
+  onEditGoals?: (domain: ProjectWithCounts) => void;
+  onDelete?: (domain: ProjectWithCounts) => void;
 }
 
 export function DomainCard({ domain, areaId, onEdit, onEditGoals, onDelete }: DomainCardProps) {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
-import type { DomainFormData, AreaOfLife } from '@/app/lib/types';
+import type { ProjectFormData, AreaOfLife } from '@/app/lib/types';
 import { supabase } from '@/app/lib/supabase';
 
 interface AddDomainModalStandaloneProps {
@@ -23,7 +23,7 @@ const defaultColors = [
 
 export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselectedAreaId }: AddDomainModalStandaloneProps) {
   const [areas, setAreas] = useState<AreaOfLife[]>([]);
-  const [formData, setFormData] = useState<DomainFormData>({
+  const [formData, setFormData] = useState<ProjectFormData>({
     area_id: preselectedAreaId || '',
     name: '',
     description: '',

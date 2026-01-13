@@ -1,6 +1,13 @@
 // Utility functions
 
 /**
+ * Utility function for conditionally joining classNames
+ */
+export function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
+
+/**
  * Capitalize the first letter of a string
  */
 export function capitalize(str: string): string {

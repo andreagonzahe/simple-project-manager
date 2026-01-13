@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
-import type { DomainWithCounts } from '@/app/lib/types';
+import type { ProjectWithCounts } from '@/app/lib/types';
 import { supabase } from '@/app/lib/supabase';
 
 interface EditDomainModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  domain: DomainWithCounts | null;
+  domain: ProjectWithCounts | null;
 }
 
 const defaultColors = [

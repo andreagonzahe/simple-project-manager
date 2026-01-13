@@ -971,8 +971,18 @@ export default function DomainsPage() {
             setSelectedItem(null);
           }}
           onSuccess={handleEditItemSuccess}
-          task={selectedItem}
-          itemType={selectedItem.item_type}
+          taskId={selectedItem.id}
+          taskType={selectedItem.item_type}
+          initialData={{
+            title: selectedItem.title,
+            description: selectedItem.description || undefined,
+            status: selectedItem.status as any,
+            priority: selectedItem.priority as any,
+            severity: (selectedItem as any).severity,
+            is_recurring: selectedItem.is_recurring,
+            recurrence_pattern: selectedItem.recurrence_pattern as any,
+            recurrence_end_date: selectedItem.recurrence_end_date,
+          }}
         />
       )}
 
