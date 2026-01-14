@@ -21,6 +21,7 @@ interface FocusTask {
   type: 'task' | 'bug' | 'feature';
   do_date: string | null;
   due_date: string | null;
+  area_id: string;
   area_name: string;
   area_color: string;
   project_id: string | null;
@@ -40,6 +41,7 @@ export default function FocusModePage() {
   const [tasks, setTasks] = useState<FocusTask[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<FocusTask[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [areas, setAreas] = useState<{ id: string; name: string }[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -47,6 +49,7 @@ export default function FocusModePage() {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [filterCommitment, setFilterCommitment] = useState<FilterCommitment>('all');
   const [filterProject, setFilterProject] = useState<string>('all');
+  const [filterArea, setFilterArea] = useState<string>('all');
   const [showConfetti, setShowConfetti] = useState(false);
   
   // Edit modal state
@@ -73,11 +76,26 @@ export default function FocusModePage() {
   useEffect(() => {
     fetchMustDoTasks();
     fetchProjects();
+    fetchAreas();
   }, []);
 
   useEffect(() => {
     applyFiltersAndSort();
-  }, [tasks, sortBy, filterStatus, filterCommitment, filterProject]);
+  }, [tasks, sortBy, filterStatus, filterCommitment, filterProject, filterArea]);
+
+  const fetchAreas = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('areas_of_life')
+        .select('id, name')
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+      setAreas(data || []);
+    } catch (error) {
+      console.error('Error fetching areas:', error);
+    }
+  };
 
   const fetchProjects = async () => {
     try {
@@ -156,6 +174,7 @@ export default function FocusModePage() {
                 type: type,
                 do_date: item.do_date,
                 due_date: item.due_date,
+                area_id: item.area_id || area.id,
                 area_name: area.name,
                 area_color: area.color,
                 project_id: item.project_id || null,
@@ -199,6 +218,11 @@ export default function FocusModePage() {
     // Apply project filter
     if (filterProject !== 'all') {
       filtered = filtered.filter(t => t.project_id === filterProject);
+    }
+
+    // Apply area filter
+    if (filterArea !== 'all') {
+      filtered = filtered.filter(t => t.area_id === filterArea);
     }
 
     // Apply sorting
@@ -421,7 +445,7 @@ export default function FocusModePage() {
             style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-elevated)' }}
           >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 {/* Sort */}
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
@@ -479,6 +503,26 @@ export default function FocusModePage() {
                   </select>
                 </div>
 
+                {/* Area Filter */}
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                    Area
+                  </label>
+                  <select
+                    value={filterArea}
+                    onChange={(e) => setFilterArea(e.target.value)}
+                    className="w-full px-4 py-2 glass rounded-xl"
+                    style={{ color: 'var(--color-text-primary)' }}
+                  >
+                    <option value="all">All Areas</option>
+                    {areas.map((area) => (
+                      <option key={area.id} value={area.id}>
+                        {area.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* Project Filter */}
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
@@ -501,13 +545,14 @@ export default function FocusModePage() {
               </div>
 
               {/* Clear Filters Button */}
-              {(filterCommitment !== 'all' || filterStatus !== 'all' || filterProject !== 'all') && (
+              {(filterCommitment !== 'all' || filterStatus !== 'all' || filterProject !== 'all' || filterArea !== 'all') && (
                 <div className="mt-4 flex justify-end">
                   <button
                     onClick={() => {
                       setFilterCommitment('all');
                       setFilterStatus('all');
                       setFilterProject('all');
+                      setFilterArea('all');
                     }}
                     className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
                     style={{
