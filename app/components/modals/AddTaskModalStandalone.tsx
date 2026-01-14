@@ -25,8 +25,9 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
     title: '',
     description: '',
     priority: 'medium' as 'low' | 'medium' | 'high',
-    status: 'idea' as 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed',
+    status: 'executing' as 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed',
     severity: 'minor' as 'minor' | 'major' | 'critical', // Only for bugs
+    commitment_level: 'optional' as 'must_do' | 'optional',
     due_date: '',
     do_date: '',
     is_recurring: false,
@@ -60,6 +61,13 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
       setSelectedProjectId('');
     }
   }, [selectedAreaId]);
+
+  // Auto-set priority to high when commitment level is set to must_do
+  useEffect(() => {
+    if (formData.commitment_level === 'must_do') {
+      setFormData(prev => ({ ...prev, priority: 'high' }));
+    }
+  }, [formData.commitment_level]);
 
   const fetchAreas = async () => {
     try {
@@ -110,6 +118,7 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
         description: formData.description || null,
         priority: formData.priority,
         status: formData.status,
+        commitment_level: formData.commitment_level,
         due_date: formData.due_date || null,
         do_date: formData.do_date || null,
         is_recurring: formData.is_recurring,
@@ -148,8 +157,9 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
         title: '',
         description: '',
         priority: 'medium',
-        status: 'idea',
+        status: 'executing',
         severity: 'minor',
+        commitment_level: 'optional',
         due_date: '',
         do_date: '',
         is_recurring: false,
@@ -355,6 +365,25 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
           )}
         </div>
 
+        {/* Commitment Level */}
+        <div>
+          <label htmlFor="commitment_level" className="block text-sm font-medium mb-3 text-white">
+            Commitment Level
+          </label>
+          <select
+            id="commitment_level"
+            value={formData.commitment_level}
+            onChange={(e) => setFormData({ ...formData, commitment_level: e.target.value as any })}
+            className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="optional" className="bg-gray-800">Optional</option>
+            <option value="must_do" className="bg-gray-800">Must Do</option>
+          </select>
+          <p className="text-xs mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
+            Tasks are optional by default. Mark as Must Do for critical items.
+          </p>
+        </div>
+
         {/* Due Date and Do Date */}
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -374,13 +403,50 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
             <label htmlFor="do_date" className="block text-sm font-medium mb-3 text-white">
               Do Date (Optional)
             </label>
-            <input
-              type="date"
-              id="do_date"
-              value={formData.do_date}
-              onChange={(e) => setFormData({ ...formData, do_date: e.target.value })}
-              className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <div className="space-y-2">
+              <input
+                type="date"
+                id="do_date"
+                value={formData.do_date}
+                onChange={(e) => setFormData({ ...formData, do_date: e.target.value })}
+                className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    setFormData({ ...formData, do_date: today.toISOString().split('T')[0] });
+                  }}
+                  className="flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all"
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.15)',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    color: '#A78BFA',
+                  }}
+                >
+                  📅 Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(0, 0, 0, 0);
+                    setFormData({ ...formData, do_date: tomorrow.toISOString().split('T')[0] });
+                  }}
+                  className="flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all"
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.15)',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    color: '#A78BFA',
+                  }}
+                >
+                  🗓️ Tomorrow
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

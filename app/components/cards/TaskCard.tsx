@@ -33,6 +33,18 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       <div className="flex flex-wrap gap-2 mb-3">
         <StatusBadge status={task.status} />
         <PriorityBadge priority={task.priority} />
+        {task.commitment_level === 'optional' && (
+          <span
+            className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+            style={{
+              backgroundColor: 'rgba(107, 114, 128, 0.15)',
+              color: '#9CA3AF',
+              border: '1px solid rgba(107, 114, 128, 0.3)',
+            }}
+          >
+            Optional
+          </span>
+        )}
       </div>
       
       <div className="flex justify-between text-xs text-gray-500">

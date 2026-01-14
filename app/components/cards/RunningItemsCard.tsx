@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowUpDown, Filter, Calendar, Tag, AlertCircle, CheckCircle2, Circle, Trash2 } from 'lucide-react';
+import { ArrowUpDown, Filter, Calendar, Tag, AlertCircle, CheckCircle2, Circle, Trash2, Plus } from 'lucide-react';
 import { supabase } from '@/app/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from 'lucide-react';
 import { EditTaskModal } from '@/app/components/modals/EditTaskModal';
 import { DeleteConfirmModal } from '@/app/components/modals/DeleteConfirmModal';
+import { AddTaskModalStandalone } from '@/app/components/modals/AddTaskModalStandalone';
+import { CommitmentBadge } from '@/app/components/badges/CommitmentBadge';
 import type { ItemStatus, ItemPriority } from '@/app/lib/types';
 
 interface RunningItem {
@@ -15,6 +17,7 @@ interface RunningItem {
   type: 'task' | 'bug' | 'feature';
   status: string;
   priority: string;
+  commitment_level?: 'must_do' | 'optional';
   due_date: string | null;
   do_date: string | null;
   created_at: string;
@@ -53,6 +56,9 @@ export function RunningItemsCard() {
   const [itemToDelete, setItemToDelete] = useState<{ id: string; type: 'task' | 'bug' | 'feature'; title: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Add task modal state
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+
   useEffect(() => {
     fetchItems();
     fetchAreas();
@@ -83,6 +89,7 @@ export function RunningItemsCard() {
           title,
           status,
           priority,
+          commitment_level,
           due_date,
           do_date,
           created_at,
@@ -119,6 +126,7 @@ export function RunningItemsCard() {
               type: 'task',
               status: task.status,
               priority: task.priority,
+              commitment_level: task.commitment_level,
               due_date: task.due_date,
               do_date: task.do_date,
               created_at: task.created_at,
@@ -361,6 +369,7 @@ export function RunningItemsCard() {
           description: data.description,
           status: data.status as ItemStatus,
           priority: data.priority as ItemPriority,
+          commitment_level: data.commitment_level || 'must_do',
           due_date: data.due_date,
           do_date: data.do_date,
           severity: data.severity,
@@ -414,6 +423,11 @@ export function RunningItemsCard() {
     }
   };
 
+  const handleAddTaskSuccess = () => {
+    setIsAddTaskModalOpen(false);
+    fetchItems(); // Refresh the list
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -428,9 +442,18 @@ export function RunningItemsCard() {
         </h3>
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setIsAddTaskModalOpen(true)}
+            className="p-2 rounded-lg transition-all glass glass-hover"
+            style={{ color: 'var(--color-text-secondary)' }}
+            title="Add new task"
+          >
+            <Plus size={18} strokeWidth={2} />
+          </button>
+          <button
             onClick={() => setShowFilters(!showFilters)}
             className={`p-2 rounded-lg transition-all ${showFilters ? 'glass' : ''}`}
             style={{ color: 'var(--color-text-secondary)' }}
+            title="Toggle filters"
           >
             <Filter size={18} strokeWidth={2} />
           </button>
@@ -640,17 +663,22 @@ export function RunningItemsCard() {
                 </h4>
 
                 {/* Item Footer */}
-                <div className="flex items-center justify-between text-xs">
-                  <span 
-                    className="px-2 py-1 rounded-md font-medium capitalize"
-                    style={{ 
-                      background: 'var(--color-bg-glass)',
-                      color: 'var(--color-text-secondary)'
-                    }}
-                  >
-                    {item.status.replace('_', ' ')}
-                  </span>
-                  <div className="flex items-center gap-3 text-xs">
+                <div className="flex items-center justify-between text-xs gap-2">
+                  <div className="flex items-center gap-2">
+                    <span 
+                      className="px-2 py-1 rounded-md font-medium capitalize"
+                      style={{ 
+                        background: 'var(--color-bg-glass)',
+                        color: 'var(--color-text-secondary)'
+                      }}
+                    >
+                      {item.status.replace('_', ' ')}
+                    </span>
+                    {item.type === 'task' && item.commitment_level && (
+                      <CommitmentBadge commitmentLevel={item.commitment_level} />
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 text-xs flex-shrink-0">
                     {item.do_date && (
                       <div className="flex items-center gap-1" style={{ color: 'var(--color-text-tertiary)' }} title="Do Date">
                         <Calendar size={12} />
@@ -696,6 +724,13 @@ export function RunningItemsCard() {
         isDeleting={isDeleting}
         title="Delete Task"
         message={`Are you sure you want to delete "${itemToDelete?.title}"? This action cannot be undone.`}
+      />
+
+      {/* Add Task Modal */}
+      <AddTaskModalStandalone
+        isOpen={isAddTaskModalOpen}
+        onClose={() => setIsAddTaskModalOpen(false)}
+        onSuccess={handleAddTaskSuccess}
       />
     </motion.div>
   );

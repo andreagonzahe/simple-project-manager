@@ -61,6 +61,22 @@ export function MobileMenu({
             {/* Menu Items */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2">
               <Link
+                href="/focus"
+                onClick={onClose}
+                className="w-full px-4 py-3.5 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-3"
+                style={{ 
+                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))',
+                  color: 'var(--color-text-primary)'
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                </svg>
+                <span>Focus Mode</span>
+              </Link>
+
+              <Link
                 href="/calendar"
                 onClick={onClose}
                 className="w-full px-4 py-3.5 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-3"

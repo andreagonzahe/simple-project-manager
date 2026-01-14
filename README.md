@@ -1,22 +1,38 @@
-# Andrea's Project Manager
+# Andrea's Project Manager ✨
 
-A beautiful, modern personal project management system built with Next.js 15, TypeScript, Tailwind CSS 4, and Supabase. Organize your life across different areas with a Notion-style interface.
+A beautiful, dreamy personal project management system with a soft girly aesthetic. Built with Next.js 15, TypeScript, Tailwind CSS 4, and Supabase. Organize your life across different areas with a cute, modern interface featuring soft pastels, playful animations, and magical pink-purple themes.
 
 ![Andrea's Project Manager](https://img.shields.io/badge/Next.js-15-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8) ![Supabase](https://img.shields.io/badge/Supabase-Latest-3ecf8e)
 
+## 💖 Design Philosophy
+
+**Cute, Fun & Professional** - A girly aesthetic that's delightful without being distracting. Soft pastel colors, dreamy pink-purple themes, extra rounded corners (28px!), and gentle animations create a warm, personal workspace that's both beautiful and functional.
+
 ## 🌟 Features
+
+### 🎯 **Smart Navigation**
+- **Collapsible Sidebar Menu**: Hidden by default, opens on demand
+- **Hamburger Menu**: Quick access to all major sections (Home, Focus Mode, Areas, Projects, Tasks)
+- **Smooth Animations**: Spring-based slide-in transitions with backdrop
+- **Auto-Close**: Menu closes automatically after navigation
+- **Backdrop Dismissal**: Click outside to close menu
 
 ### ✨ **Complete Hierarchy System**
 - **Areas of Life** → **Domains** → **Projects (Subdomains)** → **Features/Bugs/Tasks** → **Sub-Tasks**
 - Navigate seamlessly through your entire project structure
 - Breadcrumb navigation for easy context switching
 
-### 🎨 **Beautiful Notion-Style Design**
-- Clean, modern card-based interface
-- Smooth Framer Motion animations
-- Hover effects and transitions
-- Customizable colors for areas and domains
-- Responsive design (mobile, tablet, desktop)
+### 🎨 **Beautiful Girly Design**
+- **Soft Pastel Colors**: Pink-purple dreamscape theme
+- **Extra Rounded Corners**: 28px border radius for maximum softness
+- **Dreamy Backgrounds**: Radial gradients with magical glows
+- **Glass Morphism**: Soft, pink-tinted transparent cards
+- **Playful Animations**: Gentle bounces, twinkles, and floats
+- **Sparkle Effects**: Optional cute decorations (✨)
+- **Pink-Purple Accents**: Cohesive, warm color palette
+- **Smooth Framer Motion**: Buttery-smooth transitions
+- **Two Themes**: Magical night (dark) and dreamy day (light)
+- **Responsive design** (mobile, tablet, desktop)
 
 ### 🔍 **Powerful Organization**
 - **Sorting**: Sort by status, priority, date started, date completed, or creation date
@@ -25,12 +41,16 @@ A beautiful, modern personal project management system built with Next.js 15, Ty
 - **Status Tracking**: Backlog → In Progress → Completed
 - **Priority Levels**: Low, Medium, High
 - **Bug Severity**: Minor, Major, Critical (for bugs only)
+- **Commitment Levels**: Mark tasks as "Must Do" or "Optional" for better prioritization
 
 ### 📊 **Dashboard & Analytics**
 - View counts for domains, projects, and items
 - Active items tracking
 - Real-time data updates
 - Empty states with helpful prompts
+- **Today's Tasks**: View all tasks scheduled for today plus overdue items
+- **Tomorrow's Tasks**: Plan ahead with tomorrow's scheduled tasks
+- **Important Reminders**: Keep track of critical items with optional due dates
 
 ### 🎯 **Subtask Management**
 - Break down features and bugs into smaller subtasks

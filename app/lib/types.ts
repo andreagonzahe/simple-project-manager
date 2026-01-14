@@ -3,6 +3,7 @@ export type ItemStatus = 'backlog' | 'idea' | 'idea_validation' | 'exploration' 
 export type ItemPriority = 'low' | 'medium' | 'high' | 'critical';
 export type BugSeverity = 'minor' | 'major' | 'critical';
 export type RecurrencePattern = 'daily' | 'weekly' | 'monthly' | 'yearly';
+export type CommitmentLevel = 'must_do' | 'optional';
 
 // Simplified Hierarchy: Area -> Project -> Task
 
@@ -39,6 +40,7 @@ export interface Feature {
   description?: string;
   status: ItemStatus;
   priority: ItemPriority;
+  commitment_level: CommitmentLevel;
   due_date?: string;
   do_date?: string;
   date_started?: string;
@@ -61,6 +63,7 @@ export interface Bug {
   status: ItemStatus;
   priority: ItemPriority;
   severity: BugSeverity;
+  commitment_level: CommitmentLevel;
   due_date?: string;
   do_date?: string;
   date_started?: string;
@@ -82,6 +85,7 @@ export interface Task {
   description?: string;
   status: ItemStatus;
   priority: ItemPriority;
+  commitment_level: CommitmentLevel;
   due_date?: string;
   do_date?: string;
   date_started?: string;
@@ -129,6 +133,7 @@ export interface ItemFormData {
   status?: ItemStatus;
   priority?: ItemPriority;
   severity?: BugSeverity; // Only for bugs
+  commitment_level?: CommitmentLevel;
   due_date?: string;
   do_date?: string;
 }

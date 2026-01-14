@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import { supabase } from '@/app/lib/supabase';
 import { handleRecurringTaskCompletion } from '@/app/lib/utils';
+import { Confetti } from '@/app/components/ui/Confetti';
 import type { ItemStatus, ItemPriority } from '@/app/lib/types';
 
 interface EditTaskModalProps {
@@ -17,6 +18,7 @@ interface EditTaskModalProps {
     description?: string;
     status: ItemStatus;
     priority: ItemPriority;
+    commitment_level?: 'must_do' | 'optional';
     due_date?: string;
     do_date?: string;
     severity?: 'minor' | 'major' | 'critical';
@@ -37,6 +39,7 @@ export function EditTaskModal({
   const [formData, setFormData] = useState(initialData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -45,17 +48,28 @@ export function EditTaskModal({
     }
   }, [isOpen, initialData]);
 
+  // Auto-set priority to high when commitment level is set to must_do
+  useEffect(() => {
+    if (formData.commitment_level === 'must_do' && formData.priority !== 'high') {
+      setFormData(prev => ({ ...prev, priority: 'high' }));
+    }
+  }, [formData.commitment_level]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
     try {
+      // Check if task is being marked as complete
+      const wasCompleted = formData.status === 'complete' && initialData.status !== 'complete';
+
       let updateData: any = {
         title: formData.title,
         description: formData.description || null,
         status: formData.status,
         priority: formData.priority,
+        commitment_level: formData.commitment_level || 'optional',
         due_date: formData.due_date || null,
         do_date: formData.do_date || null,
         is_recurring: formData.is_recurring || false,
@@ -68,7 +82,7 @@ export function EditTaskModal({
       }
 
       // Check if task is being marked as complete and is recurring
-      if (formData.status === 'complete' && initialData.status !== 'complete') {
+      if (wasCompleted) {
         // Task is being completed
         const recurringUpdate = await handleRecurringTaskCompletion({
           is_recurring: formData.is_recurring,
@@ -88,8 +102,18 @@ export function EditTaskModal({
 
       if (updateError) throw updateError;
 
-      onSuccess();
-      onClose();
+      // Trigger confetti if task was completed
+      if (wasCompleted) {
+        setShowConfetti(true);
+        // Wait a bit for confetti to show before closing
+        setTimeout(() => {
+          onSuccess();
+          onClose();
+        }, 1500);
+      } else {
+        onSuccess();
+        onClose();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update item');
     } finally {
@@ -98,8 +122,10 @@ export function EditTaskModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Edit ${taskType.charAt(0).toUpperCase() + taskType.slice(1)}`} size="lg">
-      <form onSubmit={handleSubmit} className="space-y-5">
+    <>
+      <Confetti trigger={showConfetti} />
+      <Modal isOpen={isOpen} onClose={onClose} title={`Edit ${taskType.charAt(0).toUpperCase() + taskType.slice(1)}`} size="lg">
+        <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
           <div className="p-4 glass rounded-xl text-sm border" style={{ 
             borderColor: 'rgba(239, 68, 68, 0.3)',
@@ -217,6 +243,28 @@ export function EditTaskModal({
           </div>
         )}
 
+        {/* Commitment Level */}
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+            Commitment Level
+          </label>
+          <select
+            value={formData.commitment_level || 'optional'}
+            onChange={(e) => setFormData({ ...formData, commitment_level: e.target.value as 'must_do' | 'optional' })}
+            className="w-full px-4 py-3 glass rounded-xl outline-none transition-all text-base"
+            style={{ 
+              color: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <option value="optional">Optional</option>
+            <option value="must_do">Must Do</option>
+          </select>
+          <p className="text-xs mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
+            Tasks are optional by default. Mark as Must Do for critical items.
+          </p>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           {/* Due Date */}
           <div>
@@ -240,16 +288,53 @@ export function EditTaskModal({
             <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
               Do Date (Optional)
             </label>
-            <input
-              type="date"
-              value={formData.do_date || ''}
-              onChange={(e) => setFormData({ ...formData, do_date: e.target.value })}
-              className="w-full px-4 py-3 glass rounded-xl outline-none transition-all text-base"
-              style={{ 
-                color: 'var(--color-text-primary)',
-                border: '1px solid var(--color-border)',
-              }}
-            />
+            <div className="space-y-2">
+              <input
+                type="date"
+                value={formData.do_date || ''}
+                onChange={(e) => setFormData({ ...formData, do_date: e.target.value })}
+                className="w-full px-4 py-3 glass rounded-xl outline-none transition-all text-base"
+                style={{ 
+                  color: 'var(--color-text-primary)',
+                  border: '1px solid var(--color-border)',
+                }}
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    setFormData({ ...formData, do_date: today.toISOString().split('T')[0] });
+                  }}
+                  className="flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:opacity-80"
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.15)',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    color: '#A78BFA',
+                  }}
+                >
+                  📅 Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(0, 0, 0, 0);
+                    setFormData({ ...formData, do_date: tomorrow.toISOString().split('T')[0] });
+                  }}
+                  className="flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all hover:opacity-80"
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.15)',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    color: '#A78BFA',
+                  }}
+                >
+                  🗓️ Tomorrow
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -324,6 +409,26 @@ export function EditTaskModal({
             Cancel
           </button>
           <button
+            type="button"
+            onClick={async () => {
+              setFormData({ ...formData, status: 'complete' });
+              // Trigger form submission after state update
+              setTimeout(() => {
+                const form = document.querySelector('form');
+                if (form) form.requestSubmit();
+              }, 0);
+            }}
+            disabled={isSubmitting}
+            className="flex-1 px-6 py-3 rounded-xl font-medium transition-all"
+            style={{
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.8))',
+              color: 'white',
+              opacity: isSubmitting ? 0.6 : 1,
+            }}
+          >
+            ✓ Complete
+          </button>
+          <button
             type="submit"
             disabled={isSubmitting}
             className="flex-1 px-6 py-3 rounded-xl font-medium transition-all"
@@ -338,5 +443,6 @@ export function EditTaskModal({
         </div>
       </form>
     </Modal>
+    </>
   );
 }

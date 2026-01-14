@@ -8,6 +8,7 @@ import type { ItemStatus, ItemPriority } from '@/app/lib/types';
 import { AddTaskModalStandalone } from '@/app/components/modals/AddTaskModalStandalone';
 import { EditTaskModal } from '@/app/components/modals/EditTaskModal';
 import { EditGoalsModal } from '@/app/components/modals/EditGoalsModal';
+import { EditDomainModal } from '@/app/components/modals/EditDomainModal';
 import { DeleteConfirmModal } from '@/app/components/modals/DeleteConfirmModal';
 import { EmptyState } from '@/app/components/ui/EmptyState';
 import { Breadcrumb } from '@/app/components/ui/Breadcrumb';
@@ -15,6 +16,7 @@ import { ToastContainer, useToast } from '@/app/components/ui/Toast';
 import { ThemeToggle } from '@/app/components/ui/ThemeToggle';
 import { StatusBadge } from '@/app/components/badges/StatusBadge';
 import { PriorityBadge } from '@/app/components/badges/PriorityBadge';
+import { CommitmentBadge } from '@/app/components/badges/CommitmentBadge';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -40,6 +42,7 @@ interface TaskItem {
   description?: string;
   status: ItemStatus;
   priority: ItemPriority;
+  commitment_level: 'must_do' | 'optional';
   type: 'task' | 'bug' | 'feature';
   due_date?: string;
   do_date?: string;
@@ -59,6 +62,7 @@ export default function DomainDetailPage() {
   const [filteredTasks, setFilteredTasks] = useState<TaskItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isGoalsModalOpen, setIsGoalsModalOpen] = useState(false);
+  const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -113,7 +117,9 @@ export default function DomainDetailPage() {
     const { data: tasksData } = await supabase
       .from('tasks')
       .select('*')
-      .eq('project_id', domainId);
+      .eq('project_id', domainId)
+      .neq('status', 'complete')
+      .neq('status', 'dismissed');
 
     if (tasksData) {
       allTasks.push(...tasksData.map(t => ({ ...t, type: 'task' as const })));
@@ -123,7 +129,9 @@ export default function DomainDetailPage() {
     const { data: bugsData } = await supabase
       .from('bugs')
       .select('*')
-      .eq('project_id', domainId);
+      .eq('project_id', domainId)
+      .neq('status', 'complete')
+      .neq('status', 'dismissed');
 
     if (bugsData) {
       allTasks.push(...bugsData.map(b => ({ ...b, type: 'bug' as const })));
@@ -133,7 +141,9 @@ export default function DomainDetailPage() {
     const { data: featuresData } = await supabase
       .from('features')
       .select('*')
-      .eq('project_id', domainId);
+      .eq('project_id', domainId)
+      .neq('status', 'complete')
+      .neq('status', 'dismissed');
 
     if (featuresData) {
       allTasks.push(...featuresData.map(f => ({ ...f, type: 'feature' as const })));
@@ -328,7 +338,17 @@ export default function DomainDetailPage() {
                 )}
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsEditProjectModalOpen(true)}
+                className="flex items-center gap-2 px-5 py-3 rounded-2xl glass glass-hover transition-all font-medium"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                <Pencil size={18} strokeWidth={2.5} />
+                <span>Edit Project</span>
+              </button>
+              <ThemeToggle />
+            </div>
           </div>
         </motion.div>
 
@@ -599,6 +619,9 @@ export default function DomainDetailPage() {
                     <div className="flex flex-wrap gap-2 mb-3">
                       <StatusBadge status={task.status} />
                       <PriorityBadge priority={task.priority} />
+                      {task.commitment_level && (
+                        <CommitmentBadge commitmentLevel={task.commitment_level} />
+                      )}
                     </div>
 
                     {/* Dates */}
@@ -651,6 +674,7 @@ export default function DomainDetailPage() {
             description: selectedTask.description,
             status: selectedTask.status,
             priority: selectedTask.priority,
+            commitment_level: selectedTask.commitment_level,
             due_date: selectedTask.due_date,
             do_date: selectedTask.do_date,
             severity: selectedTask.severity,
@@ -669,6 +693,26 @@ export default function DomainDetailPage() {
           onConfirm={handleDeleteConfirm}
           title="Delete Task"
           message={`Are you sure you want to delete "${selectedTask.title}"? This action cannot be undone.`}
+        />
+      )}
+
+      {/* Edit Project Modal */}
+      {domain && (
+        <EditDomainModal
+          isOpen={isEditProjectModalOpen}
+          onClose={() => setIsEditProjectModalOpen(false)}
+          onSuccess={() => {
+            fetchData();
+            setIsEditProjectModalOpen(false);
+          }}
+          domain={{
+            id: domain.id,
+            name: domain.name,
+            description: domain.description,
+            color: domain.color,
+            status: (domain as any).status || 'idea',
+            goals: domain.goals || [],
+          } as any}
         />
       )}
     </div>

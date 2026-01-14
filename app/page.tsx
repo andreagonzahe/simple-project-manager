@@ -11,10 +11,13 @@ import { RunningItemsCard } from './components/cards/RunningItemsCard';
 import { RunningProjectsCard } from './components/cards/RunningProjectsCard';
 import { TodaysFocusCard } from './components/cards/TodaysFocusCard';
 import { RemindersCard } from './components/cards/RemindersCard';
+import { TodaysTasksCard } from './components/cards/TodaysTasksCard';
+import { TomorrowsTasksCard } from './components/cards/TomorrowsTasksCard';
 import { CompletedTasksCard } from './components/cards/CompletedTasksCard';
 import { AddAreaModal } from './components/modals/AddAreaModal';
 import { AddDomainModalStandalone } from './components/modals/AddDomainModalStandalone';
 import { AddTaskModalStandalone } from './components/modals/AddTaskModalStandalone';
+import { EditTaskModal } from './components/modals/EditTaskModal';
 import { EditTodaysFocusModal } from './components/modals/EditTodaysFocusModal';
 import { EditGoalsModal } from './components/modals/EditGoalsModal';
 import { EditAreaGoalsModal } from './components/modals/EditAreaGoalsModal';
@@ -84,6 +87,11 @@ export default function HomePage() {
   const [selectedArea, setSelectedArea] = useState<AreaWithCounts | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { toasts, showToast, removeToast } = useToast();
+
+  // Task edit modal state
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<{ id: string; type: 'task' | 'bug' | 'feature' } | null>(null);
+  const [editTaskData, setEditTaskData] = useState<any>(null);
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -427,6 +435,48 @@ export default function HomePage() {
     setIsEditReminderModalOpen(true);
   };
 
+  const handleTaskClick = async (task: any) => {
+    try {
+      // Fetch full task data
+      const tableName = task.type === 'task' ? 'tasks' : task.type === 'bug' ? 'bugs' : 'features';
+      const { data, error } = await supabase
+        .from(tableName)
+        .select('*')
+        .eq('id', task.id)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setEditTaskData({
+          title: data.title,
+          description: data.description,
+          status: data.status,
+          priority: data.priority,
+          commitment_level: data.commitment_level || 'optional',
+          due_date: data.due_date,
+          do_date: data.do_date,
+          severity: data.severity,
+          is_recurring: data.is_recurring,
+          recurrence_pattern: data.recurrence_pattern,
+          recurrence_end_date: data.recurrence_end_date,
+        });
+        setSelectedTask({ id: task.id, type: task.type });
+        setIsEditTaskModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error fetching task data:', error);
+      showToast('Failed to load task', 'error');
+    }
+  };
+
+  const handleEditTaskSuccess = () => {
+    setIsEditTaskModalOpen(false);
+    setSelectedTask(null);
+    setEditTaskData(null);
+    showToast('Task updated successfully!', 'success');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen">
@@ -477,6 +527,20 @@ export default function HomePage() {
             </div>
             {/* Desktop Action Buttons - Hidden on Mobile */}
             <div className="hidden lg:flex flex-wrap items-center gap-2 sm:gap-3">
+              <Link
+                href="/focus"
+                className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
+                style={{ 
+                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))',
+                  color: 'var(--color-text-primary)'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[18px] sm:h-[18px]">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                </svg>
+                <span>Focus Mode</span>
+              </Link>
               <Link
                 href="/calendar"
                 className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
@@ -538,6 +602,12 @@ export default function HomePage() {
           onEditReminder={handleEditReminder}
           onDeleteReminder={handleDeleteReminderClick}
         />
+
+        {/* Today's Tasks Card */}
+        <TodaysTasksCard onTaskClick={handleTaskClick} />
+
+        {/* Tomorrow's Tasks Card */}
+        <TomorrowsTasksCard onTaskClick={handleTaskClick} />
 
         {/* Running Items Card */}
         <RunningItemsCard />
@@ -717,6 +787,22 @@ export default function HomePage() {
           }}
           onSuccess={handleReminderSuccess}
           reminder={selectedReminder}
+        />
+      )}
+
+      {/* Edit Task Modal */}
+      {selectedTask && editTaskData && (
+        <EditTaskModal
+          isOpen={isEditTaskModalOpen}
+          onClose={() => {
+            setIsEditTaskModalOpen(false);
+            setSelectedTask(null);
+            setEditTaskData(null);
+          }}
+          onSuccess={handleEditTaskSuccess}
+          taskId={selectedTask.id}
+          taskType={selectedTask.type}
+          initialData={editTaskData}
         />
       )}
 

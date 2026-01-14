@@ -16,6 +16,7 @@ import { ToastContainer, useToast } from '@/app/components/ui/Toast';
 import { ThemeToggle } from '@/app/components/ui/ThemeToggle';
 import { StatusBadge } from '@/app/components/badges/StatusBadge';
 import { PriorityBadge } from '@/app/components/badges/PriorityBadge';
+import { CommitmentBadge } from '@/app/components/badges/CommitmentBadge';
 import { SeverityBadge } from '@/app/components/badges/SeverityBadge';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -135,18 +136,24 @@ export default function DomainsPage() {
           .select('*')
           .eq('area_id', areaId)
           .is('project_id', null)
+          .neq('status', 'complete')
+          .neq('status', 'dismissed')
           .order('created_at', { ascending: false }),
         supabase
           .from('bugs')
           .select('*')
           .eq('area_id', areaId)
           .is('project_id', null)
+          .neq('status', 'complete')
+          .neq('status', 'dismissed')
           .order('created_at', { ascending: false }),
         supabase
           .from('features')
           .select('*')
           .eq('area_id', areaId)
           .is('project_id', null)
+          .neq('status', 'complete')
+          .neq('status', 'dismissed')
           .order('created_at', { ascending: false }),
       ]);
 
@@ -171,6 +178,8 @@ export default function DomainsPage() {
           `)
           .eq('area_id', areaId)
           .not('project_id', 'is', null)
+          .neq('status', 'complete')
+          .neq('status', 'dismissed')
           .order('created_at', { ascending: false }),
         supabase
           .from('bugs')
@@ -180,6 +189,8 @@ export default function DomainsPage() {
           `)
           .eq('area_id', areaId)
           .not('project_id', 'is', null)
+          .neq('status', 'complete')
+          .neq('status', 'dismissed')
           .order('created_at', { ascending: false }),
         supabase
           .from('features')
@@ -189,6 +200,8 @@ export default function DomainsPage() {
           `)
           .eq('area_id', areaId)
           .not('project_id', 'is', null)
+          .neq('status', 'complete')
+          .neq('status', 'dismissed')
           .order('created_at', { ascending: false }),
       ]);
 
@@ -681,6 +694,9 @@ export default function DomainsPage() {
                   <div className="flex flex-wrap gap-2">
                     <StatusBadge status={item.status} />
                     <PriorityBadge priority={item.priority} />
+                    {item.item_type === 'task' && item.commitment_level && (
+                      <CommitmentBadge commitmentLevel={item.commitment_level} />
+                    )}
                     {item.item_type === 'bug' && 'severity' in item && (
                       <SeverityBadge severity={item.severity} />
                     )}
@@ -794,6 +810,9 @@ export default function DomainsPage() {
                       <div className="flex flex-wrap gap-2">
                         <StatusBadge status={item.status} />
                         <PriorityBadge priority={item.priority} />
+                        {item.item_type === 'task' && item.commitment_level && (
+                          <CommitmentBadge commitmentLevel={item.commitment_level} />
+                        )}
                         {item.item_type === 'bug' && 'severity' in item && (
                           <SeverityBadge severity={item.severity} />
                         )}
@@ -978,6 +997,7 @@ export default function DomainsPage() {
             description: selectedItem.description || undefined,
             status: selectedItem.status as any,
             priority: selectedItem.priority as any,
+            commitment_level: selectedItem.commitment_level,
             severity: (selectedItem as any).severity,
             is_recurring: selectedItem.is_recurring,
             recurrence_pattern: selectedItem.recurrence_pattern as any,
