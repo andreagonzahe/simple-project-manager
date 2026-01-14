@@ -32,7 +32,7 @@ interface Project {
   name: string;
 }
 
-type SortOption = 'priority' | 'do_date' | 'status';
+type SortOption = 'priority' | 'do_date' | 'status' | 'area';
 type FilterStatus = 'all' | ItemStatus;
 type FilterCommitment = 'all' | 'must_do' | 'optional';
 
@@ -223,6 +223,9 @@ export default function FocusModePage() {
         
         case 'status':
           return a.status.localeCompare(b.status);
+        
+        case 'area':
+          return a.area_name.localeCompare(b.area_name);
         
         default:
           // Default: rolled over first, then by priority
@@ -434,6 +437,7 @@ export default function FocusModePage() {
                     <option value="priority">Priority</option>
                     <option value="do_date">Do Date</option>
                     <option value="status">Status</option>
+                    <option value="area">Area</option>
                   </select>
                 </div>
 
