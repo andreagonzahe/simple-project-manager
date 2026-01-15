@@ -1,14 +1,11 @@
 'use client';
 
-import { Info, ExternalLink, X } from 'lucide-react';
+import { Info, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function DemoBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const [isDismissed, setIsDismissed] = useState(false);
-
-  // Get repo URL from env or use default
-  const repoUrl = process.env.NEXT_PUBLIC_DEMO_REPO_URL || 'https://github.com/yourusername/simple-project-manager';
 
   // Check if user has dismissed the banner before
   useEffect(() => {
@@ -40,21 +37,11 @@ export default function DemoBanner() {
                 You're viewing a <strong>demo version</strong> with sample data.
               </span>
               <span className="hidden sm:inline ml-2">
-                All features are fully functional - try creating, editing, and organizing!
+                Feel free to explore and test all features!
               </span>
             </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <a
-              href={repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-medium rounded-full transition-colors backdrop-blur-sm"
-            >
-              <span className="hidden sm:inline">Get Your Own</span>
-              <span className="sm:hidden">Setup</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
             <button
               onClick={handleDismiss}
               className="inline-flex items-center justify-center p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
