@@ -39,7 +39,7 @@ export function DomainCard({ domain, areaId, onEdit, onEditGoals, onDelete }: Do
     }
   };
 
-  const goals = Array.isArray(domain.goals) ? domain.goals : [];
+  const goals = domain.goal ? [domain.goal] : [];
 
   return (
     <Link href={`/projects/${areaId}/${domain.id}`} className="block group h-full">
