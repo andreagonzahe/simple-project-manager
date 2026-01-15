@@ -276,7 +276,7 @@ export function CompletedTasksCard() {
                     </span>
                   </div>
                 </div>
-                <StatusBadge status="complete" />
+                <StatusBadge status="completed" />
               </div>
             </motion.div>
           ))}
