@@ -92,8 +92,7 @@ export function TomorrowsTasksCard({ onTaskClick }: TomorrowsTasksCardProps) {
             )
           `)
           .eq('do_date', tomorrowStr)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed');
+          .neq('status', 'completed');
 
         if (error) {
           console.error(`Error fetching ${tableName}:`, error);

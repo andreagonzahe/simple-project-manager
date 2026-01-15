@@ -60,7 +60,7 @@ export function TodaysTasksCard({ onTaskClick }: TodaysTasksCardProps) {
 
       // Fetch tasks with do_date = today OR overdue (do_date < today and not complete)
       const fetchFromTable = async (tableName: 'tasks' | 'bugs' | 'features', type: 'task' | 'bug' | 'feature') => {
-        const { data, error } = await supabase
+        const { data, error} = await supabase
           .from(tableName)
           .select(`
             id,
@@ -91,8 +91,7 @@ export function TodaysTasksCard({ onTaskClick }: TodaysTasksCardProps) {
             )
           `)
           .not('do_date', 'is', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .or(`do_date.eq.${todayStr},do_date.lt.${todayStr}`);
 
         if (error) {
@@ -317,11 +316,8 @@ export function TodaysTasksCard({ onTaskClick }: TodaysTasksCardProps) {
                   >
                     <option value="all">All</option>
                     <option value="backlog">Backlog</option>
-                    <option value="idea">Idea</option>
-                    <option value="idea_validation">Idea Validation</option>
-                    <option value="exploration">Exploration</option>
-                    <option value="planning">Planning</option>
-                    <option value="executing">Executing</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
                   </select>
                 </div>
               </div>

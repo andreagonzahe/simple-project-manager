@@ -48,7 +48,7 @@ export function CompletedTasksCard() {
             name
           )
         `)
-        .eq('status', 'complete')
+        .eq('status', 'completed')
         .order('updated_at', { ascending: false })
         .limit(20);
 
@@ -86,7 +86,7 @@ export function CompletedTasksCard() {
             name
           )
         `)
-        .eq('status', 'complete')
+        .eq('status', 'completed')
         .order('updated_at', { ascending: false })
         .limit(20);
 
@@ -124,7 +124,7 @@ export function CompletedTasksCard() {
             name
           )
         `)
-        .eq('status', 'complete')
+        .eq('status', 'completed')
         .order('updated_at', { ascending: false })
         .limit(20);
 

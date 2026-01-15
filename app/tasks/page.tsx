@@ -138,8 +138,7 @@ export default function TasksPage() {
               color
             )
           `)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed');
+          .neq('status', 'completed');
 
         if (error) throw error;
 

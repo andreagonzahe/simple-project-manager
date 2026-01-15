@@ -136,24 +136,21 @@ export default function DomainsPage() {
           .select('*')
           .eq('area_id', areaId)
           .is('project_id', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .order('created_at', { ascending: false }),
         supabase
           .from('bugs')
           .select('*')
           .eq('area_id', areaId)
           .is('project_id', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .order('created_at', { ascending: false }),
         supabase
           .from('features')
           .select('*')
           .eq('area_id', areaId)
           .is('project_id', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .order('created_at', { ascending: false }),
       ]);
 
@@ -178,8 +175,7 @@ export default function DomainsPage() {
           `)
           .eq('area_id', areaId)
           .not('project_id', 'is', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .order('created_at', { ascending: false }),
         supabase
           .from('bugs')
@@ -189,8 +185,7 @@ export default function DomainsPage() {
           `)
           .eq('area_id', areaId)
           .not('project_id', 'is', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .order('created_at', { ascending: false }),
         supabase
           .from('features')
@@ -200,8 +195,7 @@ export default function DomainsPage() {
           `)
           .eq('area_id', areaId)
           .not('project_id', 'is', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .order('created_at', { ascending: false }),
       ]);
 

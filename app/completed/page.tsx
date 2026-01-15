@@ -125,7 +125,7 @@ export default function CompletedTasksPage() {
               color
             )
           `)
-          .eq('status', 'complete')
+          .eq('status', 'completed')
           .order('date_completed', { ascending: false });
 
         if (error) throw error;

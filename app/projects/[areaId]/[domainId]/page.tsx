@@ -118,8 +118,7 @@ export default function DomainDetailPage() {
       .from('tasks')
       .select('*')
       .eq('project_id', domainId)
-      .neq('status', 'complete')
-      .neq('status', 'dismissed');
+      .neq('status', 'completed');
 
     if (tasksData) {
       allTasks.push(...tasksData.map(t => ({ ...t, type: 'task' as const })));
@@ -130,8 +129,7 @@ export default function DomainDetailPage() {
       .from('bugs')
       .select('*')
       .eq('project_id', domainId)
-      .neq('status', 'complete')
-      .neq('status', 'dismissed');
+      .neq('status', 'completed');
 
     if (bugsData) {
       allTasks.push(...bugsData.map(b => ({ ...b, type: 'bug' as const })));
@@ -142,8 +140,7 @@ export default function DomainDetailPage() {
       .from('features')
       .select('*')
       .eq('project_id', domainId)
-      .neq('status', 'complete')
-      .neq('status', 'dismissed');
+      .neq('status', 'completed');
 
     if (featuresData) {
       allTasks.push(...featuresData.map(f => ({ ...f, type: 'feature' as const })));

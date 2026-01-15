@@ -17,44 +17,44 @@
 -- AREAS OF LIFE (with diverse examples)
 -- =============================================================================
 
-INSERT INTO areas_of_life (id, name, color, icon, sort_order, description) VALUES
-    ('a1111111-1111-1111-1111-111111111111', 'Career', '#3B82F6', 'Briefcase', 1, 'Professional development and work projects'),
-    ('a2222222-2222-2222-2222-222222222222', 'Health & Fitness', '#10B981', 'Heart', 2, 'Physical and mental wellness goals'),
-    ('a3333333-3333-3333-3333-333333333333', 'Personal Projects', '#EC4899', 'Sparkles', 3, 'Creative and personal endeavors'),
-    ('a4444444-4444-4444-4444-444444444444', 'Home & Garden', '#F97316', 'Home', 4, 'House maintenance and improvements'),
-    ('a5555555-5555-5555-5555-555555555555', 'Learning', '#8B5CF6', 'BookOpen', 5, 'Education and skill development');
+INSERT INTO areas_of_life (id, name, color, icon, sort_order, description, goals) VALUES
+    ('a1111111-1111-1111-1111-111111111111', 'Career', '#3B82F6', 'Briefcase', 1, 'Professional development and work projects', '["Build successful career and side projects"]'),
+    ('a2222222-2222-2222-2222-222222222222', 'Health & Fitness', '#10B981', 'Heart', 2, 'Physical and mental wellness goals', '["Stay active and healthy"]'),
+    ('a3333333-3333-3333-3333-333333333333', 'Personal Projects', '#EC4899', 'Sparkles', 3, 'Creative and personal endeavors', '["Create and share knowledge"]'),
+    ('a4444444-4444-4444-4444-444444444444', 'Home & Garden', '#F97316', 'Home', 4, 'House maintenance and improvements', '["Maintain a comfortable home"]'),
+    ('a5555555-5555-5555-5555-555555555555', 'Learning', '#8B5CF6', 'BookOpen', 5, 'Education and skill development', '["Continuous learning and growth"]');
 
 -- =============================================================================
 -- PROJECTS (formerly called domains)
 -- =============================================================================
 
 -- Career Projects
-INSERT INTO projects (id, area_id, name, description, color, status, goal) VALUES
-    ('d1111111-1111-1111-1111-111111111111', 'a1111111-1111-1111-1111-111111111111', 'SaaS Product', 'Building a project management tool', '#5E5592', 'active', 'Launch MVP by Q2 2026'),
-    ('d1111111-2222-2222-2222-222222222222', 'a1111111-1111-1111-1111-111111111111', 'Freelance Clients', 'Client work and consulting', '#3B82F6', 'active', 'Maintain 3 active clients'),
-    ('d1111111-3333-3333-3333-333333333333', 'a1111111-1111-1111-1111-111111111111', 'Side Hustle', 'Online course creation', '#06B6D4', 'planning', 'Launch first course');
+INSERT INTO projects (id, area_id, name, description, color, status, goals) VALUES
+    ('d1111111-1111-1111-1111-111111111111', 'a1111111-1111-1111-1111-111111111111', 'SaaS Product', 'Building a project management tool', '#5E5592', 'active', '["Launch MVP by Q2 2026"]'),
+    ('d1111111-2222-2222-2222-222222222222', 'a1111111-1111-1111-1111-111111111111', 'Freelance Clients', 'Client work and consulting', '#3B82F6', 'active', '["Maintain 3 active clients"]'),
+    ('d1111111-3333-3333-3333-333333333333', 'a1111111-1111-1111-1111-111111111111', 'Side Hustle', 'Online course creation', '#06B6D4', 'planning', '["Launch first course"]');
 
 -- Health & Fitness Projects
-INSERT INTO projects (id, area_id, name, description, color, status, goal) VALUES
-    ('d2222222-1111-1111-1111-111111111111', 'a2222222-2222-2222-2222-222222222222', 'Fitness Routine', 'Exercise and strength training', '#10B981', 'active', 'Work out 4x per week'),
-    ('d2222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', 'Nutrition', 'Meal planning and healthy eating', '#84CC16', 'active', 'Prep meals for the week'),
-    ('d2222222-3333-3333-3333-333333333333', 'a2222222-2222-2222-2222-222222222222', 'Mental Health', 'Mindfulness and self-care', '#14B8A6', 'active', 'Daily meditation practice');
+INSERT INTO projects (id, area_id, name, description, color, status, goals) VALUES
+    ('d2222222-1111-1111-1111-111111111111', 'a2222222-2222-2222-2222-222222222222', 'Fitness Routine', 'Exercise and strength training', '#10B981', 'active', '["Work out 4x per week"]'),
+    ('d2222222-2222-2222-2222-222222222222', 'a2222222-2222-2222-2222-222222222222', 'Nutrition', 'Meal planning and healthy eating', '#84CC16', 'active', '["Prep meals for the week"]'),
+    ('d2222222-3333-3333-3333-333333333333', 'a2222222-2222-2222-2222-222222222222', 'Mental Health', 'Mindfulness and self-care', '#14B8A6', 'active', '["Daily meditation practice"]');
 
 -- Personal Projects
-INSERT INTO projects (id, area_id, name, description, color, status, goal) VALUES
-    ('d3333333-1111-1111-1111-111111111111', 'a3333333-3333-3333-3333-333333333333', 'Blog', 'Personal tech blog', '#EC4899', 'active', 'Publish 2 posts per month'),
-    ('d3333333-2222-2222-2222-222222222222', 'a3333333-3333-3333-3333-333333333333', 'Photography', 'Learning portrait photography', '#F472B6', 'planning', 'Build portfolio'),
-    ('d3333333-3333-3333-3333-333333333333', 'a3333333-3333-3333-3333-333333333333', 'Open Source', 'Contributing to OSS projects', '#DB2777', 'active', 'Make 10 contributions');
+INSERT INTO projects (id, area_id, name, description, color, status, goals) VALUES
+    ('d3333333-1111-1111-1111-111111111111', 'a3333333-3333-3333-3333-333333333333', 'Blog', 'Personal tech blog', '#EC4899', 'active', '["Publish 2 posts per month"]'),
+    ('d3333333-2222-2222-2222-222222222222', 'a3333333-3333-3333-3333-333333333333', 'Photography', 'Learning portrait photography', '#F472B6', 'planning', '["Build portfolio"]'),
+    ('d3333333-3333-3333-3333-333333333333', 'a3333333-3333-3333-3333-333333333333', 'Open Source', 'Contributing to OSS projects', '#DB2777', 'active', '["Make 10 contributions"]');
 
 -- Home & Garden Projects
-INSERT INTO projects (id, area_id, name, description, color, status, goal) VALUES
-    ('d4444444-1111-1111-1111-111111111111', 'a4444444-4444-4444-4444-444444444444', 'Kitchen Remodel', 'Updating kitchen space', '#F97316', 'planning', 'Complete by summer'),
-    ('d4444444-2222-2222-2222-222222222222', 'a4444444-4444-4444-4444-444444444444', 'Garden Project', 'Vegetable garden setup', '#22C55E', 'active', 'Grow fresh vegetables');
+INSERT INTO projects (id, area_id, name, description, color, status, goals) VALUES
+    ('d4444444-1111-1111-1111-111111111111', 'a4444444-4444-4444-4444-444444444444', 'Kitchen Remodel', 'Updating kitchen space', '#F97316', 'planning', '["Complete by summer"]'),
+    ('d4444444-2222-2222-2222-222222222222', 'a4444444-4444-4444-4444-444444444444', 'Garden Project', 'Vegetable garden setup', '#22C55E', 'active', '["Grow fresh vegetables"]');
 
 -- Learning Projects
-INSERT INTO projects (id, area_id, name, description, color, status, goal) VALUES
-    ('d5555555-1111-1111-1111-111111111111', 'a5555555-5555-5555-5555-555555555555', 'Spanish Language', 'Conversational Spanish', '#8B5CF6', 'active', 'Achieve B2 level'),
-    ('d5555555-2222-2222-2222-222222222222', 'a5555555-5555-5555-5555-555555555555', 'Web3 Development', 'Learning blockchain and smart contracts', '#7C3AED', 'planning', 'Deploy first dApp');
+INSERT INTO projects (id, area_id, name, description, color, status, goals) VALUES
+    ('d5555555-1111-1111-1111-111111111111', 'a5555555-5555-5555-5555-555555555555', 'Spanish Language', 'Conversational Spanish', '#8B5CF6', 'active', '["Achieve B2 level"]'),
+    ('d5555555-2222-2222-2222-222222222222', 'a5555555-5555-5555-5555-555555555555', 'Web3 Development', 'Learning blockchain and smart contracts', '#7C3AED', 'planning', '["Deploy first dApp"]');
 
 -- =============================================================================
 -- FEATURES (with realistic scenarios)

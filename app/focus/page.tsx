@@ -151,8 +151,7 @@ export default function FocusModePage() {
             )
           `)
           .not('do_date', 'is', null)
-          .neq('status', 'complete')
-          .neq('status', 'dismissed')
+          .neq('status', 'completed')
           .or(`do_date.eq.${todayStr},do_date.lt.${todayStr}`);
 
         if (error) {
