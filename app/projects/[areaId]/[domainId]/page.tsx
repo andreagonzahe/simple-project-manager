@@ -518,13 +518,8 @@ export default function DomainDetailPage() {
                     >
                       <option value="all">All Statuses</option>
                       <option value="backlog">Backlog</option>
-                      <option value="idea">Idea</option>
-                      <option value="idea_validation">Idea Validation</option>
-                      <option value="exploration">Exploration</option>
-                      <option value="planning">Planning</option>
-                      <option value="executing">Executing</option>
-                      <option value="complete">Complete</option>
-                      <option value="dismissed">Dismissed</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="completed">Completed</option>
                     </select>
                   </div>
 
@@ -707,7 +702,7 @@ export default function DomainDetailPage() {
             name: domain.name,
             description: domain.description,
             color: domain.color,
-            status: (domain as any).status || 'idea',
+            status: (domain as any).status || 'active',
             goals: domain.goals || [],
           } as any}
         />

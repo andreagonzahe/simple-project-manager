@@ -406,7 +406,7 @@ export function EditTaskModal({
           <button
             type="button"
             onClick={async () => {
-              setFormData({ ...formData, status: 'complete' });
+              setFormData({ ...formData, status: 'completed' });
               // Trigger form submission after state update
               setTimeout(() => {
                 const form = document.querySelector('form');

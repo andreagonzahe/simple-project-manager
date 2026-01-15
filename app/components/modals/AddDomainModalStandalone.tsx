@@ -28,7 +28,7 @@ export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselect
     name: '',
     description: '',
     color: defaultColors[0],
-    status: 'idea',
+    status: 'active',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -27,7 +27,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
     name: '',
     description: '',
     color: defaultColors[0],
-    status: 'idea',
+    status: 'active',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export function AddDomainModal({ isOpen, onClose, onSuccess, areaId }: AddDomain
 
       onSuccess();
       onClose();
-      setFormData({ area_id: areaId, name: '', description: '', color: defaultColors[0], status: 'idea' });
+      setFormData({ area_id: areaId, name: '', description: '', color: defaultColors[0], status: 'active' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create project');
     } finally {

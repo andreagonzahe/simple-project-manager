@@ -59,7 +59,7 @@ export function RunningProjectsCard() {
             color
           )
         `)
-        .not('status', 'in', '(complete,dismissed)')
+        .not('status', 'in', '(completed)')
         .order('created_at', { ascending: false });
 
       if (projectsData) {
@@ -89,17 +89,17 @@ export function RunningProjectsCard() {
                 .from('tasks')
                 .select('*', { count: 'exact', head: true })
                 .eq('project_id', project.id)
-                .not('status', 'in', '(complete,dismissed)'),
+                .not('status', 'in', '(completed)'),
               supabase
                 .from('bugs')
                 .select('*', { count: 'exact', head: true })
                 .eq('project_id', project.id)
-                .not('status', 'in', '(complete,dismissed)'),
+                .not('status', 'in', '(completed)'),
               supabase
                 .from('features')
                 .select('*', { count: 'exact', head: true })
                 .eq('project_id', project.id)
-                .not('status', 'in', '(complete,dismissed)'),
+                .not('status', 'in', '(completed)'),
             ]);
 
             const activeItems = (activeTasks.count || 0) + (activeBugs.count || 0) + (activeFeatures.count || 0);

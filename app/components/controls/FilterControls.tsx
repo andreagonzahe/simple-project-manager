@@ -90,7 +90,7 @@ export function FilterControls({ filters, onFilterChange }: FilterControlsProps)
                       className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
                     <span className="text-sm text-gray-700 capitalize">
-                      {status === 'idea_validation' ? 'Idea Validation' : status.replace('_', ' ')}
+                      {status === 'in_progress' ? 'In Progress' : status.replace('_', ' ')}
                     </span>
                   </label>
                 ))}

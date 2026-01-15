@@ -25,7 +25,7 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
     title: '',
     description: '',
     priority: 'medium' as 'low' | 'medium' | 'high',
-    status: 'executing' as 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed',
+    status: 'backlog' as ItemStatus,
     severity: 'minor' as 'minor' | 'major' | 'critical', // Only for bugs
     commitment_level: 'optional' as 'must_do' | 'optional',
     due_date: '',
@@ -157,7 +157,7 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
         title: '',
         description: '',
         priority: 'medium',
-        status: 'executing',
+        status: 'backlog',
         severity: 'minor',
         commitment_level: 'optional',
         due_date: '',

@@ -268,7 +268,7 @@ export default function FocusModePage() {
       
       const { error } = await supabase
         .from(tableName)
-        .update({ status: 'complete' })
+        .update({ status: 'completed' })
         .eq('id', taskId);
 
       if (error) throw error;
@@ -494,11 +494,8 @@ export default function FocusModePage() {
                   >
                     <option value="all">All</option>
                     <option value="backlog">Backlog</option>
-                    <option value="idea">Idea</option>
-                    <option value="idea_validation">Idea Validation</option>
-                    <option value="exploration">Exploration</option>
-                    <option value="planning">Planning</option>
-                    <option value="executing">Executing</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
                   </select>
                 </div>
 

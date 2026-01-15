@@ -31,7 +31,7 @@ interface RunningItem {
 
 type SortOption = 'date' | 'area' | 'type' | 'priority' | 'status' | 'due_date' | 'do_date';
 type FilterType = 'all' | 'task' | 'bug' | 'feature';
-type FilterStatus = 'all' | 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed';
+type FilterStatus = 'all' | ItemStatus;
 type FilterPriority = 'all' | 'low' | 'medium' | 'high' | 'critical';
 
 export function RunningItemsCard() {
@@ -518,7 +518,7 @@ export function RunningItemsCard() {
                 STATUS
               </label>
               <div className="flex gap-2">
-                {(['all', 'backlog', 'idea', 'idea_validation', 'exploration', 'planning', 'executing', 'complete', 'dismissed'] as FilterStatus[]).map((status) => (
+                {(['all', 'backlog', 'in_progress', 'completed'] as FilterStatus[]).map((status) => (
                   <button
                     key={status}
                     onClick={() => setFilterStatus(status)}
@@ -527,7 +527,7 @@ export function RunningItemsCard() {
                     }`}
                     style={{ color: 'var(--color-text-primary)' }}
                   >
-                    {status === 'idea_validation' ? 'Idea Val.' : status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
+                    {status === 'in_progress' ? 'In Progress' : status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
                   </button>
                 ))}
               </div>

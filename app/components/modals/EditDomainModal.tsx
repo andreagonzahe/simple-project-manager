@@ -28,7 +28,7 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
     name: '',
     description: '',
     color: defaultColors[0],
-    status: 'idea' as any,
+    status: 'active' as any,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
         name: domain.name,
         description: domain.description || '',
         color: domain.color || defaultColors[0],
-        status: domain.status || 'idea',
+        status: domain.status || 'active',
       });
     }
   }, [domain, isOpen]);

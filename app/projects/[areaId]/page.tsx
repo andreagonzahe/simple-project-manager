@@ -103,17 +103,17 @@ export default function DomainsPage() {
               .from('features')
               .select('*', { count: 'exact', head: true })
               .eq('project_id', project.id)
-              .not('status', 'in', '(complete,dismissed)'),
+              .not('status', 'in', '(completed)'),
             supabase
               .from('bugs')
               .select('*', { count: 'exact', head: true })
               .eq('project_id', project.id)
-              .not('status', 'in', '(complete,dismissed)'),
+              .not('status', 'in', '(completed)'),
             supabase
               .from('tasks')
               .select('*', { count: 'exact', head: true })
               .eq('project_id', project.id)
-              .not('status', 'in', '(complete,dismissed)'),
+              .not('status', 'in', '(completed)'),
           ]);
 
           const activeItems = (activeFeat.count || 0) + (activeBugs.count || 0) + (activeTasks.count || 0);
@@ -566,16 +566,11 @@ export default function DomainsPage() {
                     border: '1px solid var(--color-border)',
                   }}
                 >
-                  <option value="all">All Statuses</option>
-                  <option value="backlog">Backlog</option>
-                  <option value="idea">Idea</option>
-                  <option value="idea_validation">Idea Validation</option>
-                  <option value="exploration">Exploration</option>
-                  <option value="planning">Planning</option>
-                  <option value="executing">Executing</option>
-                  <option value="complete">Complete</option>
-                  <option value="dismissed">Dismissed</option>
-                </select>
+                      <option value="all">All Statuses</option>
+                      <option value="backlog">Backlog</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="completed">Completed</option>
+                    </select>
               </div>
 
               {/* Sort By */}
