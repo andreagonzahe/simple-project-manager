@@ -4,6 +4,12 @@ A beautiful, dreamy personal project management system with a soft girly aesthet
 
 ![Andrea's Project Manager](https://img.shields.io/badge/Next.js-15-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8) ![Supabase](https://img.shields.io/badge/Supabase-Latest-3ecf8e)
 
+## 🎭 Try the Demo!
+
+Want to see it in action before setting it up? **[View Live Demo →](#)** _(Coming soon!)_
+
+The demo includes realistic sample data across multiple life areas (Career, Health, Personal Projects, etc.) and showcases all features including recurring tasks, reminders, goals, and more!
+
 ## 💖 Design Philosophy
 
 **Cute, Fun & Professional** - A girly aesthetic that's delightful without being distracting. Soft pastel colors, dreamy pink-purple themes, extra rounded corners (28px!), and gentle animations create a warm, personal workspace that's both beautiful and functional.
@@ -72,6 +78,24 @@ A beautiful, dreamy personal project management system with a soft girly aesthet
 
 ## 🚀 Getting Started
 
+### Two Options:
+
+#### Option 1: Demo Version (Try First!)
+
+Set up a public demo with sample data perfect for showcasing:
+
+📖 **[Follow the Demo Setup Guide →](./DEMO-SETUP-GUIDE.md)**
+
+Great for:
+- 🎭 Testing all features with realistic data
+- 🎪 Sharing with others
+- 📱 Adding to your portfolio
+- 🚀 Public demos without authentication
+
+#### Option 2: Personal Installation (For Real Use)
+
+Set up your own private instance:
+
 ### Prerequisites
 
 - Node.js 18+ installed
@@ -121,6 +145,24 @@ A beautiful, dreamy personal project management system with a soft girly aesthet
 
 6. **Open your browser:**
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🎭 Demo vs Personal Use
+
+### Demo Version
+- **Purpose**: Public showcase with sample data
+- **Setup**: See [Demo Setup Guide](./DEMO-SETUP-GUIDE.md)
+- **Features**: All features enabled, no authentication
+- **Best for**: Portfolio, sharing, testing
+- **Data**: Pre-populated realistic examples
+- **Banner**: Shows "Demo Mode" notification
+
+### Personal Version
+- **Purpose**: Your private project manager
+- **Setup**: See [Quick Start](./QUICK-START.md)
+- **Features**: Full functionality for real work
+- **Best for**: Daily use, actual project management
+- **Data**: Your own projects and tasks
+- **Banner**: No demo banner
 
 ## 📁 Project Structure
 

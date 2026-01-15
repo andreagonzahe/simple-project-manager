@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { LayoutWrapper } from "./components/LayoutWrapper";
+import DemoBanner from "./components/ui/DemoBanner";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -22,9 +23,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isDemo = process.env.NEXT_PUBLIC_IS_DEMO === 'true';
+
   return (
     <html lang="en" className={plusJakarta.variable}>
       <body className={`${plusJakarta.className} antialiased`}>
+        {isDemo && <DemoBanner />}
         <ThemeProvider>
           <LayoutWrapper>
             {children}
