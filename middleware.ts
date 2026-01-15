@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  // Skip authentication for demo mode
+  const isDemo = process.env.NEXT_PUBLIC_IS_DEMO === 'true';
+  
+  if (isDemo) {
+    return NextResponse.next();
+  }
+  
   // Check if user is authenticated
   const isAuthenticated = request.cookies.get('app-authenticated');
   
