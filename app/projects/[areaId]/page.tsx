@@ -936,7 +936,7 @@ export default function DomainsPage() {
         onSuccess={handleGoalsSuccess}
         domainId={selectedProject?.id || ''}
         domainName={selectedProject?.name || ''}
-        currentGoals={selectedProject?.goals || []}
+        currentGoals={selectedProject?.goal ? [selectedProject.goal] : []}
       />
 
       {/* Delete Project Modal */}
