@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
-import type { AreaOfLife, Project } from '@/app/lib/types';
+import type { AreaOfLife, Project, ItemStatus } from '@/app/lib/types';
 import { supabase } from '@/app/lib/supabase';
 
 interface AddTaskModalStandaloneProps {
