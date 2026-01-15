@@ -1,8 +1,8 @@
-import type { ItemStatus } from '@/app/lib/types';
+import type { ItemStatus, DomainStatus } from '@/app/lib/types';
 import { getStatusColor, capitalize } from '@/app/lib/utils';
 
 interface StatusBadgeProps {
-  status?: ItemStatus;
+  status?: ItemStatus | DomainStatus;
   className?: string;
 }
 
@@ -10,12 +10,21 @@ export function StatusBadge({ status = 'backlog', className = '' }: StatusBadgeP
   const color = getStatusColor(status);
   
   // Format status label
-  const getStatusLabel = (status: ItemStatus): string => {
+  const getStatusLabel = (status: ItemStatus | DomainStatus): string => {
     switch (status) {
+      // ItemStatus values
       case 'backlog':
         return 'Backlog';
       case 'in_progress':
         return 'In Progress';
+      // DomainStatus values
+      case 'planning':
+        return 'Planning';
+      case 'active':
+        return 'Active';
+      case 'paused':
+        return 'Paused';
+      // Shared value
       case 'completed':
         return 'Completed';
       default:
