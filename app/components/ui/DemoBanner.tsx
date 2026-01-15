@@ -4,15 +4,24 @@ import { Info, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function DemoBanner() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  // Check if user has dismissed the banner before
   useEffect(() => {
+    // Check if this is demo mode
+    const isDemo = process.env.NEXT_PUBLIC_IS_DEMO === 'true';
+    
+    if (!isDemo) {
+      return; // Don't show banner if not demo
+    }
+
+    // Check if user has dismissed the banner before
     const dismissed = localStorage.getItem('demo-banner-dismissed');
     if (dismissed === 'true') {
       setIsDismissed(true);
       setIsVisible(false);
+    } else {
+      setIsVisible(true);
     }
   }, []);
 
@@ -34,7 +43,7 @@ export default function DemoBanner() {
             </div>
             <p className="text-sm font-medium text-white">
               <span className="inline">
-                You're viewing a <strong>demo version</strong> with sample data.
+                🎭 This is a <strong>DEMO VERSION</strong> with sample data.
               </span>
               <span className="hidden sm:inline ml-2">
                 Feel free to explore and test all features!

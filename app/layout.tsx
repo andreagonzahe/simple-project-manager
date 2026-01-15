@@ -23,12 +23,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isDemo = process.env.NEXT_PUBLIC_IS_DEMO === 'true';
-
   return (
     <html lang="en" className={plusJakarta.variable}>
       <body className={`${plusJakarta.className} antialiased`}>
-        {isDemo && <DemoBanner />}
+        <DemoBanner />
         <ThemeProvider>
           <LayoutWrapper>
             {children}
