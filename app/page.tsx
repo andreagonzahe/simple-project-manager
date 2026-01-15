@@ -135,10 +135,17 @@ export default function HomePage() {
   const fetchAreas = async () => {
     try {
       setIsLoading(true);
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:138',message:'fetchAreas started',data:{timestamp:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       const { data: areasData, error: areasError } = await supabase
         .from('areas_of_life')
         .select('*')
         .order('sort_order', { ascending: true });
+
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:143',message:'areas query result',data:{hasData:!!areasData,dataCount:areasData?.length||0,error:areasError?.message||null,errorCode:areasError?.code||null},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
 
       if (areasError) throw areasError;
 
@@ -159,11 +166,17 @@ export default function HomePage() {
           let totalItems = 0;
           if (projects) {
             for (const project of projects) {
+              // #region agent log
+              fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:162',message:'fetching items for project',data:{projectId:project.id,projectName:projects[0]?.name||'unknown'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
+              // #endregion
               const [features, bugs, tasks] = await Promise.all([
                 supabase.from('features').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
                 supabase.from('bugs').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
                 supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
               ]);
+              // #region agent log
+              fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:168',message:'items fetched',data:{featuresCount:features.count||0,bugsCount:bugs.count||0,tasksCount:tasks.count||0,featuresError:features.error?.message||null,bugsError:bugs.error?.message||null,tasksError:tasks.error?.message||null},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+              // #endregion
               totalItems += (features.count || 0) + (bugs.count || 0) + (tasks.count || 0);
             }
           }
@@ -177,8 +190,14 @@ export default function HomePage() {
       );
 
       setAreas(areasWithCounts);
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:179',message:'fetchAreas completed',data:{areasCount:areasWithCounts.length,firstArea:areasWithCounts[0]?.name||null},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
     } catch (error) {
       console.error('Error fetching areas:', error);
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:183',message:'fetchAreas ERROR',data:{errorMessage:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F'})}).catch(()=>{});
+      // #endregion
       showToast('Failed to load areas', 'error');
     } finally {
       setIsLoading(false);
