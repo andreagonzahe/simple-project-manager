@@ -167,7 +167,7 @@ export default function HomePage() {
           if (projects) {
             for (const project of projects) {
               // #region agent log
-              fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:162',message:'fetching items for project',data:{projectId:project.id,projectName:projects[0]?.name||'unknown'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
+              fetch('http://127.0.0.1:7245/ingest/8abf4c45-0339-46f9-abf0-cf617fbf166c',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'page.tsx:162',message:'fetching items for project',data:{projectId:project.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
               // #endregion
               const [features, bugs, tasks] = await Promise.all([
                 supabase.from('features').select('*', { count: 'exact', head: true }).eq('project_id', project.id),
