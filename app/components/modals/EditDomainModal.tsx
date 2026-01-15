@@ -128,14 +128,10 @@ export function EditDomainModal({ isOpen, onClose, onSuccess, domain }: EditDoma
             className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
-            <option value="backlog">Backlog</option>
-            <option value="idea">Idea</option>
-            <option value="idea_validation">Idea Validation</option>
-            <option value="exploration">Exploration</option>
             <option value="planning">Planning</option>
-            <option value="executing">Executing</option>
-            <option value="complete">Complete</option>
-            <option value="dismissed">Dismissed</option>
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="completed">Completed</option>
           </select>
         </div>
 

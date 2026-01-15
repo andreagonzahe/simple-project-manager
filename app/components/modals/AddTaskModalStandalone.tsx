@@ -353,13 +353,8 @@ export function AddTaskModalStandalone({ isOpen, onClose, onSuccess, preselected
                 className="w-full px-4 py-3 glass rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="backlog" className="bg-gray-800">Backlog</option>
-                <option value="idea" className="bg-gray-800">Idea</option>
-                <option value="idea_validation" className="bg-gray-800">Idea Validation</option>
-                <option value="exploration" className="bg-gray-800">Exploration</option>
-                <option value="planning" className="bg-gray-800">Planning</option>
-                <option value="executing" className="bg-gray-800">Executing</option>
-                <option value="complete" className="bg-gray-800">Complete</option>
-                <option value="dismissed" className="bg-gray-800">Dismissed</option>
+                <option value="in_progress" className="bg-gray-800">In Progress</option>
+                <option value="completed" className="bg-gray-800">Completed</option>
               </select>
             </div>
           )}
