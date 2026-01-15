@@ -83,7 +83,7 @@ export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselect
 
       onSuccess();
       onClose();
-      setFormData({ area_id: '', name: '', description: '', color: defaultColors[0], status: 'idea' });
+      setFormData({ area_id: '', name: '', description: '', color: defaultColors[0], status: 'active' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create project');
     } finally {
