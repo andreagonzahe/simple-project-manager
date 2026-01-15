@@ -61,8 +61,8 @@ export function EditTaskModal({
     setIsSubmitting(true);
 
     try {
-      // Check if task is being marked as complete
-      const wasCompleted = formData.status === 'complete' && initialData.status !== 'complete';
+      // Check if task is being marked as completed
+      const wasCompleted = formData.status === 'completed' && initialData.status !== 'completed';
 
       let updateData: any = {
         title: formData.title,

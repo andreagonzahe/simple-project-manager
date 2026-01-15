@@ -17,7 +17,7 @@ interface FilterControlsProps {
 export function FilterControls({ filters, onFilterChange }: FilterControlsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const statuses: ItemStatus[] = ['backlog', 'idea', 'idea_validation', 'exploration', 'planning', 'executing', 'complete', 'dismissed'];
+  const statuses: ItemStatus[] = ['backlog', 'in_progress', 'completed'];
   const priorities: ItemPriority[] = ['low', 'medium', 'high'];
 
   const toggleStatus = (status: ItemStatus) => {

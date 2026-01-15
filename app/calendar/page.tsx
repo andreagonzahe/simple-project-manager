@@ -390,15 +390,12 @@ export default function CalendarPage() {
                         </div>
                       </div>
                       <div className={`text-xs px-2 py-1 rounded inline-block ${
-                        task.status === 'complete' ? 'bg-green-600/20 text-green-400' :
-                        task.status === 'executing' ? 'bg-blue-600/20 text-blue-400' :
-                        task.status === 'planning' ? 'bg-emerald-600/20 text-emerald-400' :
-                        task.status === 'idea' ? 'bg-purple-600/20 text-purple-400' :
+                        task.status === 'completed' ? 'bg-green-600/20 text-green-400' :
+                        task.status === 'in_progress' ? 'bg-blue-600/20 text-blue-400' :
                         'bg-gray-600/20 text-gray-400'
                       }`}>
-                        {task.status === 'idea_validation' ? 'Idea Validation' : 
-                         task.status === 'executing' ? 'Executing' :
-                         task.status === 'complete' ? 'Complete' :
+                        {task.status === 'in_progress' ? 'In Progress' :
+                         task.status === 'completed' ? 'Completed' :
                          task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                       </div>
                     </motion.div>

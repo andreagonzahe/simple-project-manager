@@ -1,9 +1,10 @@
 // Database enums
-export type ItemStatus = 'backlog' | 'idea' | 'idea_validation' | 'exploration' | 'planning' | 'executing' | 'complete' | 'dismissed';
-export type ItemPriority = 'low' | 'medium' | 'high' | 'critical';
+export type ItemStatus = 'backlog' | 'in_progress' | 'completed';
+export type ItemPriority = 'low' | 'medium' | 'high';
 export type BugSeverity = 'minor' | 'major' | 'critical';
 export type RecurrencePattern = 'daily' | 'weekly' | 'monthly' | 'yearly';
 export type CommitmentLevel = 'must_do' | 'optional';
+export type DomainStatus = 'planning' | 'active' | 'paused' | 'completed';
 
 // Simplified Hierarchy: Area -> Project -> Task
 
@@ -25,9 +26,9 @@ export interface Project {
   area_id: string;
   name: string;
   description?: string;
+  goal?: string;
   color: string;
-  status: ItemStatus;
-  goals?: string[];
+  status: DomainStatus;
   created_at: string;
   updated_at: string;
 }
@@ -124,7 +125,7 @@ export interface ProjectFormData {
   name: string;
   description?: string;
   color: string;
-  status?: ItemStatus;
+  status?: DomainStatus;
 }
 
 export interface ItemFormData {
