@@ -22,20 +22,17 @@ export function getStatusColor(status: string): string {
   switch (status) {
     case 'backlog':
       return '#6B7280';
-    case 'idea':
-      return '#8B5CF6';
-    case 'idea_validation':
-      return '#A78BFA';
-    case 'exploration':
+    case 'in_progress':
       return '#3B82F6';
-    case 'planning':
-      return '#0EA5E9';
-    case 'executing':
-      return '#F59E0B';
-    case 'complete':
+    case 'completed':
       return '#10B981';
-    case 'dismissed':
-      return '#EF4444';
+    // Project/domain statuses
+    case 'planning':
+      return '#8B5CF6';
+    case 'active':
+      return '#10B981';
+    case 'paused':
+      return '#F59E0B';
     default:
       return '#6B7280';
   }
@@ -140,10 +137,10 @@ export async function handleRecurringTaskCompletion(
   next_due_date: string | null;
   date_completed?: string | null;
 }> {
-  // If not recurring, just mark as complete
+  // If not recurring, just mark as completed
   if (!task.is_recurring || !task.recurrence_pattern) {
     return {
-      status: 'complete',
+      status: 'completed',
       last_completed_date: completionDate.toISOString().split('T')[0],
       next_due_date: null,
       date_completed: completionDate.toISOString().split('T')[0],
@@ -157,9 +154,9 @@ export async function handleRecurringTaskCompletion(
   if (task.recurrence_end_date) {
     const endDate = new Date(task.recurrence_end_date);
     if (nextDue > endDate) {
-      // End date reached, mark as complete
+      // End date reached, mark as completed
       return {
-        status: 'complete',
+        status: 'completed',
         last_completed_date: completionDate.toISOString().split('T')[0],
         next_due_date: null,
         date_completed: completionDate.toISOString().split('T')[0],

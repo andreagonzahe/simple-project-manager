@@ -12,22 +12,12 @@ export function StatusBadge({ status = 'backlog', className = '' }: StatusBadgeP
   // Format status label
   const getStatusLabel = (status: ItemStatus): string => {
     switch (status) {
-      case 'idea_validation':
-        return 'Idea Validation';
       case 'backlog':
         return 'Backlog';
-      case 'idea':
-        return 'Idea';
-      case 'exploration':
-        return 'Exploration';
-      case 'planning':
-        return 'Planning';
-      case 'executing':
-        return 'Executing';
-      case 'complete':
-        return 'Complete';
-      case 'dismissed':
-        return 'Dismissed';
+      case 'in_progress':
+        return 'In Progress';
+      case 'completed':
+        return 'Completed';
       default:
         return capitalize(status);
     }
