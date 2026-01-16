@@ -26,6 +26,19 @@ export function RemindersCard({
   onDeleteReminder,
   reminders 
 }: RemindersCardProps) {
+  // Helper function to check if a date is overdue (ignoring time)
+  const isOverdue = (dueDate: string | null): boolean => {
+    if (!dueDate) return false;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const due = new Date(dueDate + 'T00:00:00'); // Force local timezone interpretation
+    due.setHours(0, 0, 0, 0);
+    
+    return due < today;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
@@ -103,16 +116,16 @@ export function RemindersCard({
                     )}
                     {reminder.due_date && (
                       <p className="text-xs flex items-center gap-1.5" style={{ 
-                        color: new Date(reminder.due_date) < new Date() ? '#ef4444' : 'var(--color-text-tertiary)' 
+                        color: isOverdue(reminder.due_date) ? '#ef4444' : 'var(--color-text-tertiary)' 
                       }}>
                         <span>📅</span>
                         <span>
-                          Due: {new Date(reminder.due_date).toLocaleDateString('en-US', { 
+                          Due: {new Date(reminder.due_date + 'T00:00:00').toLocaleDateString('en-US', { 
                             month: 'short', 
                             day: 'numeric',
                             year: new Date(reminder.due_date).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
                           })}
-                          {new Date(reminder.due_date) < new Date() && ' (overdue)'}
+                          {isOverdue(reminder.due_date) && ' (overdue)'}
                         </span>
                       </p>
                     )}
