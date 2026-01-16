@@ -339,8 +339,8 @@ export default function FocusModePage() {
         commitment_level: task.commitment_level,
         due_date: task.due_date || undefined,
         do_date: task.do_date || undefined,
-        project_id: task.project_id || null,
-        area_id: task.area_id,
+        project_id: task.project_id || undefined,
+        area_id: task.area_id || undefined,
       }
     });
     setIsEditModalOpen(true);
