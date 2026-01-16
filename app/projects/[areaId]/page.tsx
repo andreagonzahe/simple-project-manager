@@ -52,6 +52,16 @@ export default function DomainsPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | ItemStatus>('all');
   const [sortBy, setSortBy] = useState<'created_at' | 'name' | 'status'>('created_at');
   const { toasts, showToast, removeToast } = useToast();
+  
+  // Task filtering and sorting states
+  const [showTaskFilters, setShowTaskFilters] = useState(false);
+  const [taskFilterStatus, setTaskFilterStatus] = useState<'all' | ItemStatus>('all');
+  const [taskFilterPriority, setTaskFilterPriority] = useState<'all' | 'low' | 'medium' | 'high' | 'critical'>('all');
+  const [taskFilterCommitment, setTaskFilterCommitment] = useState<'all' | 'must_do' | 'optional'>('all');
+  const [taskFilterProject, setTaskFilterProject] = useState<string>('all');
+  const [taskSortBy, setTaskSortBy] = useState<'priority' | 'created_at' | 'do_date' | 'due_date'>('priority');
+  const [filteredAreaItems, setFilteredAreaItems] = useState<ItemUnion[]>([]);
+  const [filteredProjectItems, setFilteredProjectItems] = useState<Map<string, { projectName: string; items: ItemUnion[] }>>(new Map());
 
   const fetchData = async () => {
     try{
@@ -237,6 +247,10 @@ export default function DomainsPage() {
     applyFiltersAndSort();
   }, [projects, filterStatus, sortBy]);
 
+  useEffect(() => {
+    applyTaskFiltersAndSort();
+  }, [areaItems, projectItems, taskFilterStatus, taskFilterPriority, taskFilterCommitment, taskFilterProject, taskSortBy]);
+
   const applyFiltersAndSort = () => {
     let filtered = [...projects];
 
@@ -259,6 +273,116 @@ export default function DomainsPage() {
     });
 
     setFilteredProjects(filtered);
+  };
+
+  const applyTaskFiltersAndSort = () => {
+    // Filter area items
+    let filteredArea = [...areaItems];
+
+    if (taskFilterStatus !== 'all') {
+      filteredArea = filteredArea.filter(item => item.status === taskFilterStatus);
+    }
+
+    if (taskFilterPriority !== 'all') {
+      filteredArea = filteredArea.filter(item => item.priority === taskFilterPriority);
+    }
+
+    if (taskFilterCommitment !== 'all') {
+      filteredArea = filteredArea.filter(item => {
+        if (item.item_type === 'task') {
+          return item.commitment_level === taskFilterCommitment;
+        }
+        return taskFilterCommitment === 'optional'; // bugs and features don't have commitment level
+      });
+    }
+
+    // Sort area items
+    filteredArea.sort((a, b) => {
+      switch (taskSortBy) {
+        case 'priority':
+          const priorityOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+          return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+        case 'do_date':
+          if (!a.do_date && !b.do_date) return 0;
+          if (!a.do_date) return 1;
+          if (!b.do_date) return -1;
+          return new Date(a.do_date).getTime() - new Date(b.do_date).getTime();
+        case 'due_date':
+          if (!a.due_date && !b.due_date) return 0;
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+        case 'created_at':
+        default:
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
+
+    setFilteredAreaItems(filteredArea);
+
+    // Filter project items
+    const filteredProjects = new Map<string, { projectName: string; items: ItemUnion[] }>();
+
+    projectItems.forEach((projectData, projectId) => {
+      let filteredItems = [...projectData.items];
+
+      // Apply project filter
+      if (taskFilterProject !== 'all' && projectId !== taskFilterProject) {
+        return; // Skip this project entirely
+      }
+
+      // Apply status filter
+      if (taskFilterStatus !== 'all') {
+        filteredItems = filteredItems.filter(item => item.status === taskFilterStatus);
+      }
+
+      // Apply priority filter
+      if (taskFilterPriority !== 'all') {
+        filteredItems = filteredItems.filter(item => item.priority === taskFilterPriority);
+      }
+
+      // Apply commitment filter
+      if (taskFilterCommitment !== 'all') {
+        filteredItems = filteredItems.filter(item => {
+          if (item.item_type === 'task') {
+            return item.commitment_level === taskFilterCommitment;
+          }
+          return taskFilterCommitment === 'optional';
+        });
+      }
+
+      // Sort items
+      filteredItems.sort((a, b) => {
+        switch (taskSortBy) {
+          case 'priority':
+            const priorityOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+            return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+          case 'do_date':
+            if (!a.do_date && !b.do_date) return 0;
+            if (!a.do_date) return 1;
+            if (!b.do_date) return -1;
+            return new Date(a.do_date).getTime() - new Date(b.do_date).getTime();
+          case 'due_date':
+            if (!a.due_date && !b.due_date) return 0;
+            if (!a.due_date) return 1;
+            if (!b.due_date) return -1;
+            return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+          case 'created_at':
+          default:
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        }
+      });
+
+      // Only add project if it has items after filtering
+      if (filteredItems.length > 0) {
+        filteredProjects.set(projectId, {
+          projectName: projectData.projectName,
+          items: filteredItems,
+        });
+      }
+    });
+
+    setFilteredProjectItems(filteredProjects);
   };
 
   const handleAddSuccess = async () => {
@@ -437,12 +561,20 @@ export default function DomainsPage() {
             </div>
             <div className="flex items-center gap-3">
               <button
+                onClick={() => setShowTaskFilters(!showTaskFilters)}
+                className={`px-4 py-2 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${showTaskFilters ? 'opacity-100' : 'opacity-70'}`}
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                <Filter size={16} />
+                Task Filters
+              </button>
+              <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`px-4 py-2 glass glass-hover rounded-xl text-sm font-medium transition-all flex items-center gap-2 ${showFilters ? 'opacity-100' : 'opacity-70'}`}
                 style={{ color: 'var(--color-text-primary)' }}
               >
                 <Filter size={16} />
-                Filters
+                Project Filters
               </button>
               <button
                 onClick={() => setIsEditAreaGoalsModalOpen(true)}
@@ -551,6 +683,9 @@ export default function DomainsPage() {
             animate={{ opacity: 1, height: 'auto' }}
             className="mb-6 p-5 glass rounded-2xl"
           >
+            <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+              Project Filters
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               {/* Status Filter */}
               <div>
@@ -596,8 +731,148 @@ export default function DomainsPage() {
           </motion.div>
         )}
 
+        {/* Task Filters */}
+        {showTaskFilters && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mb-6 p-5 glass rounded-2xl"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                Task Filters & Sorting
+              </h3>
+              {(taskFilterStatus !== 'all' || taskFilterPriority !== 'all' || taskFilterCommitment !== 'all' || taskFilterProject !== 'all') && (
+                <button
+                  onClick={() => {
+                    setTaskFilterStatus('all');
+                    setTaskFilterPriority('all');
+                    setTaskFilterCommitment('all');
+                    setTaskFilterProject('all');
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                  style={{
+                    background: 'var(--color-accent)',
+                    color: '#fff',
+                  }}
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {/* Sort By */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                  Sort By
+                </label>
+                <select
+                  value={taskSortBy}
+                  onChange={(e) => setTaskSortBy(e.target.value as any)}
+                  className="w-full px-3 py-2 glass rounded-xl outline-none text-sm"
+                  style={{ 
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <option value="priority">Priority</option>
+                  <option value="created_at">Created Date</option>
+                  <option value="do_date">Do Date</option>
+                  <option value="due_date">Due Date</option>
+                </select>
+              </div>
+
+              {/* Status Filter */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                  Status
+                </label>
+                <select
+                  value={taskFilterStatus}
+                  onChange={(e) => setTaskFilterStatus(e.target.value as any)}
+                  className="w-full px-3 py-2 glass rounded-xl outline-none text-sm"
+                  style={{ 
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <option value="all">All</option>
+                  <option value="backlog">Backlog</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+
+              {/* Priority Filter */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                  Priority
+                </label>
+                <select
+                  value={taskFilterPriority}
+                  onChange={(e) => setTaskFilterPriority(e.target.value as any)}
+                  className="w-full px-3 py-2 glass rounded-xl outline-none text-sm"
+                  style={{ 
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <option value="all">All</option>
+                  <option value="critical">Critical</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+
+              {/* Commitment Filter */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                  Commitment
+                </label>
+                <select
+                  value={taskFilterCommitment}
+                  onChange={(e) => setTaskFilterCommitment(e.target.value as any)}
+                  className="w-full px-3 py-2 glass rounded-xl outline-none text-sm"
+                  style={{ 
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <option value="all">All</option>
+                  <option value="must_do">Must Do</option>
+                  <option value="optional">Optional</option>
+                </select>
+              </div>
+
+              {/* Project Filter */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                  Project
+                </label>
+                <select
+                  value={taskFilterProject}
+                  onChange={(e) => setTaskFilterProject(e.target.value)}
+                  className="w-full px-3 py-2 glass rounded-xl outline-none text-sm"
+                  style={{ 
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  <option value="all">All Projects</option>
+                  {projects.map((project) => (
+                    <option key={project.id} value={project.id}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Area-Level Items Section */}
-        {areaItems.length > 0 && (
+        {filteredAreaItems.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -605,10 +880,10 @@ export default function DomainsPage() {
           >
             <h2 className="text-xl font-bold tracking-tight mb-5 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
               <CheckCircle2 size={20} style={{ color: area?.color || '#8B5CF6' }} />
-              All Area Items ({areaItems.length})
+              All Area Items ({filteredAreaItems.length})
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {areaItems.map((item, index) => (
+              {filteredAreaItems.map((item, index) => (
                 <motion.div
                   key={`${item.item_type}-${item.id}`}
                   initial={{ opacity: 0, y: 20 }}
@@ -728,13 +1003,13 @@ export default function DomainsPage() {
         )}
 
         {/* Items Grouped by Project */}
-        {projectItems.size > 0 && (
+        {filteredProjectItems.size > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-10 space-y-8"
           >
-            {Array.from(projectItems.entries()).map(([projectId, { projectName, items }], projectIndex) => (
+            {Array.from(filteredProjectItems.entries()).map(([projectId, { projectName, items }], projectIndex) => (
               <div key={projectId}>
                 <h2 className="text-xl font-bold tracking-tight mb-5 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
                   <Sparkles size={20} style={{ color: area?.color || '#8B5CF6' }} />
@@ -747,14 +1022,30 @@ export default function DomainsPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="glass rounded-2xl p-5 border transition-all hover:shadow-lg cursor-pointer"
+                      className="glass rounded-2xl p-5 border transition-all hover:shadow-lg relative group"
                       style={{ 
                         borderColor: 'var(--color-border)',
                       }}
                     >
+                      {/* Action buttons - visible on hover */}
+                      <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => handleEditItem(item)}
+                          className="p-2 glass glass-hover rounded-lg transition-all"
+                          style={{ color: 'var(--color-text-primary)' }}
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(item)}
+                          className="p-2 glass glass-hover rounded-lg transition-all text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
                       <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          {item.item_type === 'task' && (
+                        <div className="flex items-center gap-2">{item.item_type === 'task' && (
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ 
                               background: 'rgba(59, 130, 246, 0.15)',
                               border: '1.5px solid rgba(59, 130, 246, 0.3)',
