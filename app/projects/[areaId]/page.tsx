@@ -1342,6 +1342,8 @@ export default function DomainsPage() {
             is_recurring: selectedItem.is_recurring,
             recurrence_pattern: selectedItem.recurrence_pattern as any,
             recurrence_end_date: selectedItem.recurrence_end_date,
+            project_id: selectedItem.project_id || null,
+            area_id: selectedItem.area_id,
           }}
         />
       )}

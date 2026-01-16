@@ -25,6 +25,8 @@ interface EditTaskModalProps {
     is_recurring?: boolean;
     recurrence_pattern?: 'daily' | 'weekly' | 'monthly' | 'yearly';
     recurrence_end_date?: string;
+    project_id?: string | null;
+    area_id?: string;
   };
 }
 
@@ -37,6 +39,7 @@ export function EditTaskModal({
   initialData,
 }: EditTaskModalProps) {
   const [formData, setFormData] = useState(initialData);
+  const [currentType, setCurrentType] = useState<'task' | 'bug' | 'feature'>(taskType);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -44,9 +47,10 @@ export function EditTaskModal({
   useEffect(() => {
     if (isOpen) {
       setFormData(initialData);
+      setCurrentType(taskType);
       setError(null);
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, taskType]);
 
   // Auto-set priority to high when commitment level is set to must_do
   useEffect(() => {
@@ -63,66 +67,134 @@ export function EditTaskModal({
     try {
       // Check if task is being marked as completed
       const wasCompleted = formData.status === 'completed' && initialData.status !== 'completed';
-
-      let updateData: any = {
-        title: formData.title,
-        description: formData.description || null,
-        status: formData.status,
-        priority: formData.priority,
-        due_date: formData.due_date || null,
-        do_date: formData.do_date || null,
-        is_recurring: formData.is_recurring || false,
-        recurrence_pattern: formData.is_recurring ? formData.recurrence_pattern : null,
-        recurrence_end_date: formData.is_recurring && formData.recurrence_end_date ? formData.recurrence_end_date : null,
-      };
-
-      // Only add commitment_level for tasks (not bugs or features)
-      if (taskType === 'task') {
-        updateData.commitment_level = formData.commitment_level || 'optional';
-      }
-
-      if (taskType === 'bug' && formData.severity) {
-        updateData.severity = formData.severity;
-      }
-
-      // Check if task is being marked as complete and is recurring
-      if (wasCompleted) {
-        // Task is being completed
-        const recurringUpdate = await handleRecurringTaskCompletion({
-          is_recurring: formData.is_recurring,
-          recurrence_pattern: formData.recurrence_pattern,
-          recurrence_end_date: formData.recurrence_end_date,
-        });
-        
-        // Merge the recurring update data
-        updateData = { ...updateData, ...recurringUpdate };
-      }
-
-      const tableName = taskType === 'task' ? 'tasks' : taskType === 'bug' ? 'bugs' : 'features';
       
-      console.log('Updating task:', { taskId, tableName, updateData });
-      
-      const { error: updateError } = await supabase
-        .from(tableName)
-        .update(updateData)
-        .eq('id', taskId);
+      // Check if type is being changed
+      const typeChanged = currentType !== taskType;
 
-      if (updateError) {
-        console.error('Update error:', updateError);
-        throw updateError;
-      }
+      if (typeChanged) {
+        // Handle type conversion: Delete from old table and insert into new table
+        const oldTableName = taskType === 'task' ? 'tasks' : taskType === 'bug' ? 'bugs' : 'features';
+        const newTableName = currentType === 'task' ? 'tasks' : currentType === 'bug' ? 'bugs' : 'features';
 
-      // Trigger confetti if task was completed
-      if (wasCompleted) {
-        setShowConfetti(true);
-        // Wait a bit for confetti to show before closing
-        setTimeout(() => {
+        // Prepare new item data
+        let newItemData: any = {
+          title: formData.title,
+          description: formData.description || null,
+          status: formData.status,
+          priority: formData.priority,
+          due_date: formData.due_date || null,
+          do_date: formData.do_date || null,
+          is_recurring: formData.is_recurring || false,
+          recurrence_pattern: formData.is_recurring ? formData.recurrence_pattern : null,
+          recurrence_end_date: formData.is_recurring && formData.recurrence_end_date ? formData.recurrence_end_date : null,
+          project_id: initialData.project_id || null,
+          area_id: initialData.area_id,
+        };
+
+        // Add type-specific fields
+        if (currentType === 'task') {
+          newItemData.commitment_level = formData.commitment_level || 'optional';
+        }
+        if (currentType === 'bug') {
+          newItemData.severity = formData.severity || 'minor';
+        }
+
+        console.log('Converting type:', { oldTableName, newTableName, newItemData });
+
+        // Insert into new table
+        const { error: insertError } = await supabase
+          .from(newTableName)
+          .insert([newItemData]);
+
+        if (insertError) {
+          console.error('Insert error:', insertError);
+          throw insertError;
+        }
+
+        // Delete from old table
+        const { error: deleteError } = await supabase
+          .from(oldTableName)
+          .delete()
+          .eq('id', taskId);
+
+        if (deleteError) {
+          console.error('Delete error:', deleteError);
+          throw deleteError;
+        }
+
+        // Success
+        if (wasCompleted) {
+          setShowConfetti(true);
+          setTimeout(() => {
+            onSuccess();
+            onClose();
+          }, 1500);
+        } else {
           onSuccess();
           onClose();
-        }, 1500);
+        }
       } else {
-        onSuccess();
-        onClose();
+        // Normal update (no type change)
+        let updateData: any = {
+          title: formData.title,
+          description: formData.description || null,
+          status: formData.status,
+          priority: formData.priority,
+          due_date: formData.due_date || null,
+          do_date: formData.do_date || null,
+          is_recurring: formData.is_recurring || false,
+          recurrence_pattern: formData.is_recurring ? formData.recurrence_pattern : null,
+          recurrence_end_date: formData.is_recurring && formData.recurrence_end_date ? formData.recurrence_end_date : null,
+        };
+
+        // Only add commitment_level for tasks (not bugs or features)
+        if (taskType === 'task') {
+          updateData.commitment_level = formData.commitment_level || 'optional';
+        }
+
+        if (taskType === 'bug' && formData.severity) {
+          updateData.severity = formData.severity;
+        }
+
+        // Check if task is being marked as complete and is recurring
+        if (wasCompleted) {
+          // Task is being completed
+          const recurringUpdate = await handleRecurringTaskCompletion({
+            is_recurring: formData.is_recurring,
+            recurrence_pattern: formData.recurrence_pattern,
+            recurrence_end_date: formData.recurrence_end_date,
+          });
+          
+          // Merge the recurring update data
+          updateData = { ...updateData, ...recurringUpdate };
+        }
+
+        const tableName = taskType === 'task' ? 'tasks' : taskType === 'bug' ? 'bugs' : 'features';
+        
+        console.log('Updating task:', { taskId, tableName, updateData });
+        
+        const { error: updateError } = await supabase
+          .from(tableName)
+          .update(updateData)
+          .eq('id', taskId);
+
+        if (updateError) {
+          console.error('Update error:', updateError);
+          throw updateError;
+        }
+
+        // Trigger confetti if task was completed
+        if (wasCompleted) {
+          setShowConfetti(true);
+          // Wait a bit for confetti to show before closing
+          setTimeout(() => {
+            onSuccess();
+            onClose();
+          }, 1500);
+        } else {
+          onSuccess();
+          onClose();
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update item');
@@ -145,6 +217,35 @@ export function EditTaskModal({
             {error}
           </div>
         )}
+
+        {/* Type Selector */}
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+            Item Type
+          </label>
+          <select
+            value={currentType}
+            onChange={(e) => setCurrentType(e.target.value as 'task' | 'bug' | 'feature')}
+            className="w-full px-4 py-3 glass rounded-xl outline-none transition-all text-base"
+            style={{ 
+              color: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <option value="task">✓ Task</option>
+            <option value="bug">🐛 Bug</option>
+            <option value="feature">✨ Feature</option>
+          </select>
+          {currentType !== taskType && (
+            <p className="text-xs mt-2 px-2 py-1 rounded" style={{ 
+              color: '#FCA5A5',
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)'
+            }}>
+              ⚠️ Changing type will create a new {currentType} and delete the old {taskType}
+            </p>
+          )}
+        </div>
 
         {/* Title */}
         <div>
@@ -227,7 +328,7 @@ export function EditTaskModal({
         </div>
 
         {/* Severity (only for bugs) */}
-        {taskType === 'bug' && (
+        {currentType === 'bug' && (
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
               Severity
@@ -249,7 +350,7 @@ export function EditTaskModal({
         )}
 
         {/* Commitment Level (only for tasks) */}
-        {taskType === 'task' && (
+        {currentType === 'task' && (
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
               Commitment Level
