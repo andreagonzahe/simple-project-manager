@@ -25,6 +25,7 @@ import { EditGoalsModal } from '@/app/components/modals/EditGoalsModal';
 import { EditAreaGoalsModal } from '@/app/components/modals/EditAreaGoalsModal';
 import { AddTaskModalStandalone } from '@/app/components/modals/AddTaskModalStandalone';
 import { DeleteConfirmModal } from '@/app/components/modals/DeleteConfirmModal';
+import { Confetti } from '@/app/components/ui/Confetti';
 
 export default function DomainsPage() {
   const params = useParams();
@@ -62,6 +63,10 @@ export default function DomainsPage() {
   const [taskSortBy, setTaskSortBy] = useState<'priority' | 'created_at' | 'do_date' | 'due_date'>('priority');
   const [filteredAreaItems, setFilteredAreaItems] = useState<ItemUnion[]>([]);
   const [filteredProjectItems, setFilteredProjectItems] = useState<Map<string, { projectName: string; items: ItemUnion[] }>>(new Map());
+  
+  // Confetti and completion states
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
 
   const fetchData = async () => {
     try{
@@ -499,6 +504,36 @@ export default function DomainsPage() {
     await fetchData();
   };
 
+  const handleCompleteTask = async (taskId: string, taskType: 'task' | 'bug' | 'feature') => {
+    try {
+      const tableName = taskType === 'task' ? 'tasks' : taskType === 'bug' ? 'bugs' : 'features';
+      
+      const { error } = await supabase
+        .from(tableName)
+        .update({ status: 'completed' })
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      // Trigger confetti celebration
+      setShowConfetti(true);
+
+      // Add to completed set for animation
+      setCompletedTasks(prev => new Set(prev).add(taskId));
+
+      // Show success toast
+      showToast('Task completed! 🎉', 'success');
+
+      // Remove from list after animation
+      setTimeout(() => {
+        fetchData();
+      }, 500);
+    } catch (error) {
+      console.error('Error completing task:', error);
+      showToast('Failed to complete task', 'error');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen p-8">
@@ -521,6 +556,7 @@ export default function DomainsPage() {
 
   return (
     <div className="min-h-screen">
+      <Confetti trigger={showConfetti} onComplete={() => setShowConfetti(false)} />
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       
       <div className="max-w-[1600px] mx-auto px-12 sm:px-16 lg:px-20 py-12">
@@ -897,6 +933,12 @@ export default function DomainsPage() {
                   {/* Action buttons - visible on hover */}
                   <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
+                      onClick={() => handleDeleteItem(item)}
+                      className="p-2 glass glass-hover rounded-lg transition-all text-red-400 hover:text-red-300"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                    <button
                       onClick={() => handleEditItem(item)}
                       className="p-2 glass glass-hover rounded-lg transition-all"
                       style={{ color: 'var(--color-text-primary)' }}
@@ -904,10 +946,15 @@ export default function DomainsPage() {
                       <Pencil size={14} />
                     </button>
                     <button
-                      onClick={() => handleDeleteItem(item)}
-                      className="p-2 glass glass-hover rounded-lg transition-all text-red-400 hover:text-red-300"
+                      onClick={() => handleCompleteTask(item.id, item.item_type)}
+                      className="p-2 rounded-lg transition-all hover:scale-110"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1))',
+                        border: '2px solid rgba(16, 185, 129, 0.3)',
+                      }}
+                      title="Mark as complete"
                     >
-                      <Trash2 size={14} />
+                      <CheckCircle2 size={16} className="text-green-400" strokeWidth={2.5} />
                     </button>
                   </div>
 
@@ -1030,6 +1077,12 @@ export default function DomainsPage() {
                       {/* Action buttons - visible on hover */}
                       <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
+                          onClick={() => handleDeleteItem(item)}
+                          className="p-2 glass glass-hover rounded-lg transition-all text-red-400 hover:text-red-300"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                        <button
                           onClick={() => handleEditItem(item)}
                           className="p-2 glass glass-hover rounded-lg transition-all"
                           style={{ color: 'var(--color-text-primary)' }}
@@ -1037,10 +1090,15 @@ export default function DomainsPage() {
                           <Pencil size={14} />
                         </button>
                         <button
-                          onClick={() => handleDeleteItem(item)}
-                          className="p-2 glass glass-hover rounded-lg transition-all text-red-400 hover:text-red-300"
+                          onClick={() => handleCompleteTask(item.id, item.item_type)}
+                          className="p-2 rounded-lg transition-all hover:scale-110"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1))',
+                            border: '2px solid rgba(16, 185, 129, 0.3)',
+                          }}
+                          title="Mark as complete"
                         >
-                          <Trash2 size={14} />
+                          <CheckCircle2 size={16} className="text-green-400" strokeWidth={2.5} />
                         </button>
                       </div>
 
