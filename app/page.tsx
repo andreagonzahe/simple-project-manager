@@ -61,6 +61,7 @@ interface Reminder {
   title: string;
   description: string | null;
   due_date: string | null;
+  due_time: string | null;
   created_at: string;
 }
 
