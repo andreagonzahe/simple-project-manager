@@ -16,6 +16,7 @@ export function AddReminderModal({ isOpen, onClose, onSuccess }: AddReminderModa
     title: '',
     description: '',
     due_date: '',
+    due_time: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -23,7 +24,7 @@ export function AddReminderModal({ isOpen, onClose, onSuccess }: AddReminderModa
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setFormData({ title: '', description: '', due_date: '' });
+      setFormData({ title: '', description: '', due_date: '', due_time: '' });
       setError('');
     }
   }, [isOpen]);
@@ -46,6 +47,7 @@ export function AddReminderModal({ isOpen, onClose, onSuccess }: AddReminderModa
           title: formData.title.trim(),
           description: formData.description.trim() || null,
           due_date: formData.due_date || null,
+          due_time: formData.due_time || null,
         }]);
 
       if (insertError) throw insertError;
@@ -98,20 +100,38 @@ export function AddReminderModal({ isOpen, onClose, onSuccess }: AddReminderModa
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
-              Due Date (Optional)
-            </label>
-            <input
-              type="date"
-              value={formData.due_date}
-              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-              className="w-full px-4 py-3 glass rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400/50"
-              style={{ 
-                color: 'var(--color-text-primary)',
-                borderColor: 'var(--color-border)',
-              }}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                Due Date (Optional)
+              </label>
+              <input
+                type="date"
+                value={formData.due_date}
+                onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                className="w-full px-4 py-3 glass rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400/50"
+                style={{ 
+                  color: 'var(--color-text-primary)',
+                  borderColor: 'var(--color-border)',
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                Time (Optional)
+              </label>
+              <input
+                type="time"
+                value={formData.due_time}
+                onChange={(e) => setFormData({ ...formData, due_time: e.target.value })}
+                className="w-full px-4 py-3 glass rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400/50"
+                style={{ 
+                  color: 'var(--color-text-primary)',
+                  borderColor: 'var(--color-border)',
+                }}
+              />
+            </div>
           </div>
 
           {error && (

@@ -10,6 +10,7 @@ interface Reminder {
   title: string;
   description: string | null;
   due_date: string | null;
+  due_time: string | null;
 }
 
 interface EditReminderModalProps {
@@ -24,6 +25,7 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
     title: '',
     description: '',
     due_date: '',
+    due_time: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -35,6 +37,7 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
         title: reminder.title,
         description: reminder.description || '',
         due_date: reminder.due_date || '',
+        due_time: reminder.due_time || '',
       });
       setError('');
     }
@@ -67,6 +70,7 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
           title: formData.title.trim(),
           description: formData.description.trim() || null,
           due_date: formData.due_date || null,
+          due_time: formData.due_time || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', reminder.id);
@@ -123,20 +127,38 @@ export function EditReminderModal({ isOpen, onClose, onSuccess, reminder }: Edit
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
-              Due Date (Optional)
-            </label>
-            <input
-              type="date"
-              value={formData.due_date}
-              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-              className="w-full px-4 py-3 glass rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400/50"
-              style={{ 
-                color: 'var(--color-text-primary)',
-                borderColor: 'var(--color-border)',
-              }}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                Due Date (Optional)
+              </label>
+              <input
+                type="date"
+                value={formData.due_date}
+                onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+                className="w-full px-4 py-3 glass rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400/50"
+                style={{ 
+                  color: 'var(--color-text-primary)',
+                  borderColor: 'var(--color-border)',
+                }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                Time (Optional)
+              </label>
+              <input
+                type="time"
+                value={formData.due_time}
+                onChange={(e) => setFormData({ ...formData, due_time: e.target.value })}
+                className="w-full px-4 py-3 glass rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400/50"
+                style={{ 
+                  color: 'var(--color-text-primary)',
+                  borderColor: 'var(--color-border)',
+                }}
+              />
+            </div>
           </div>
 
           {error && (

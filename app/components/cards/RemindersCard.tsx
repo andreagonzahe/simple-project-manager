@@ -10,6 +10,7 @@ interface Reminder {
   title: string;
   description: string | null;
   due_date: string | null;
+  due_time: string | null;
   created_at: string;
 }
 
@@ -27,16 +28,42 @@ export function RemindersCard({
   reminders 
 }: RemindersCardProps) {
   // Helper function to check if a date is overdue (ignoring time)
-  const isOverdue = (dueDate: string | null): boolean => {
+  const isOverdue = (dueDate: string | null, dueTime: string | null): boolean => {
     if (!dueDate) return false;
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const now = new Date();
+    const due = new Date(dueDate + 'T' + (dueTime || '23:59:59'));
     
-    const due = new Date(dueDate + 'T00:00:00'); // Force local timezone interpretation
-    due.setHours(0, 0, 0, 0);
+    return due < now;
+  };
+
+  // Helper function to format date and time nicely
+  const formatDueDateTime = (dueDate: string | null, dueTime: string | null): string => {
+    if (!dueDate) return '';
     
-    return due < today;
+    const date = new Date(dueDate + 'T00:00:00');
+    
+    // Format: "Friday, January 16"
+    const dateStr = date.toLocaleDateString('en-US', { 
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+    });
+    
+    // If time is provided, format it as "at 4 pm"
+    if (dueTime) {
+      const [hours, minutes] = dueTime.split(':').map(Number);
+      const period = hours >= 12 ? 'pm' : 'am';
+      const displayHours = hours % 12 || 12;
+      const timeStr = minutes > 0 
+        ? `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`
+        : `${displayHours} ${period}`;
+      
+      return `${dateStr} at ${timeStr}`;
+    }
+    
+    return dateStr;
   };
 
   return (
@@ -116,16 +143,12 @@ export function RemindersCard({
                     )}
                     {reminder.due_date && (
                       <p className="text-xs flex items-center gap-1.5" style={{ 
-                        color: isOverdue(reminder.due_date) ? '#ef4444' : 'var(--color-text-tertiary)' 
+                        color: isOverdue(reminder.due_date, reminder.due_time) ? '#ef4444' : 'var(--color-text-tertiary)' 
                       }}>
                         <span>📅</span>
                         <span>
-                          Due: {new Date(reminder.due_date + 'T00:00:00').toLocaleDateString('en-US', { 
-                            month: 'short', 
-                            day: 'numeric',
-                            year: new Date(reminder.due_date).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
-                          })}
-                          {isOverdue(reminder.due_date) && ' (overdue)'}
+                          {formatDueDateTime(reminder.due_date, reminder.due_time)}
+                          {isOverdue(reminder.due_date, reminder.due_time) && ' (overdue)'}
                         </span>
                       </p>
                     )}
