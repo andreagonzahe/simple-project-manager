@@ -1337,6 +1337,8 @@ export default function DomainsPage() {
             priority: selectedItem.priority as any,
             commitment_level: selectedItem.commitment_level,
             severity: (selectedItem as any).severity,
+            due_date: selectedItem.due_date || undefined,
+            do_date: selectedItem.do_date || undefined,
             is_recurring: selectedItem.is_recurring,
             recurrence_pattern: selectedItem.recurrence_pattern as any,
             recurrence_end_date: selectedItem.recurrence_end_date,

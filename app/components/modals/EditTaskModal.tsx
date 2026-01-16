@@ -69,13 +69,17 @@ export function EditTaskModal({
         description: formData.description || null,
         status: formData.status,
         priority: formData.priority,
-        commitment_level: formData.commitment_level || 'optional',
         due_date: formData.due_date || null,
         do_date: formData.do_date || null,
         is_recurring: formData.is_recurring || false,
         recurrence_pattern: formData.is_recurring ? formData.recurrence_pattern : null,
         recurrence_end_date: formData.is_recurring && formData.recurrence_end_date ? formData.recurrence_end_date : null,
       };
+
+      // Only add commitment_level for tasks (not bugs or features)
+      if (taskType === 'task') {
+        updateData.commitment_level = formData.commitment_level || 'optional';
+      }
 
       if (taskType === 'bug' && formData.severity) {
         updateData.severity = formData.severity;
@@ -95,12 +99,18 @@ export function EditTaskModal({
       }
 
       const tableName = taskType === 'task' ? 'tasks' : taskType === 'bug' ? 'bugs' : 'features';
+      
+      console.log('Updating task:', { taskId, tableName, updateData });
+      
       const { error: updateError } = await supabase
         .from(tableName)
         .update(updateData)
         .eq('id', taskId);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Update error:', updateError);
+        throw updateError;
+      }
 
       // Trigger confetti if task was completed
       if (wasCompleted) {
@@ -238,27 +248,29 @@ export function EditTaskModal({
           </div>
         )}
 
-        {/* Commitment Level */}
-        <div>
-          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
-            Commitment Level
-          </label>
-          <select
-            value={formData.commitment_level || 'optional'}
-            onChange={(e) => setFormData({ ...formData, commitment_level: e.target.value as 'must_do' | 'optional' })}
-            className="w-full px-4 py-3 glass rounded-xl outline-none transition-all text-base"
-            style={{ 
-              color: 'var(--color-text-primary)',
-              border: '1px solid var(--color-border)',
-            }}
-          >
-            <option value="optional">Optional</option>
-            <option value="must_do">Must Do</option>
-          </select>
-          <p className="text-xs mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
-            Tasks are optional by default. Mark as Must Do for critical items.
-          </p>
-        </div>
+        {/* Commitment Level (only for tasks) */}
+        {taskType === 'task' && (
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>
+              Commitment Level
+            </label>
+            <select
+              value={formData.commitment_level || 'optional'}
+              onChange={(e) => setFormData({ ...formData, commitment_level: e.target.value as 'must_do' | 'optional' })}
+              className="w-full px-4 py-3 glass rounded-xl outline-none transition-all text-base"
+              style={{ 
+                color: 'var(--color-text-primary)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <option value="optional">Optional</option>
+              <option value="must_do">Must Do</option>
+            </select>
+            <p className="text-xs mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
+              Tasks are optional by default. Mark as Must Do for critical items.
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           {/* Due Date */}
