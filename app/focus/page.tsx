@@ -65,6 +65,8 @@ export default function FocusModePage() {
       commitment_level?: 'must_do' | 'optional';
       due_date?: string;
       do_date?: string;
+      project_id?: string | null;
+      area_id?: string;
     };
   } | null>(null);
 
