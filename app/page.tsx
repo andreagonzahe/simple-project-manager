@@ -14,6 +14,7 @@ import { RemindersCard } from './components/cards/RemindersCard';
 import { TodaysTasksCard } from './components/cards/TodaysTasksCard';
 import { TomorrowsTasksCard } from './components/cards/TomorrowsTasksCard';
 import { CompletedTasksCard } from './components/cards/CompletedTasksCard';
+import { InboxCard } from './components/cards/InboxCard';
 import { AddAreaModal } from './components/modals/AddAreaModal';
 import { AddDomainModalStandalone } from './components/modals/AddDomainModalStandalone';
 import { AddTaskModalStandalone } from './components/modals/AddTaskModalStandalone';
@@ -562,6 +563,26 @@ export default function HomePage() {
                 <span>Focus Mode</span>
               </Link>
               <Link
+                href="/map"
+                className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
+                style={{ 
+                  background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2))',
+                  color: 'var(--color-text-primary)'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[18px] sm:h-[18px]">
+                  <circle cx="5" cy="5" r="3" />
+                  <circle cx="19" cy="5" r="3" />
+                  <circle cx="5" cy="19" r="3" />
+                  <circle cx="19" cy="19" r="3" />
+                  <line x1="8" y1="5" x2="16" y2="5" />
+                  <line x1="8" y1="19" x2="16" y2="19" />
+                  <line x1="5" y1="8" x2="5" y2="16" />
+                  <line x1="19" y1="8" x2="19" y2="16" />
+                </svg>
+                <span>Map View</span>
+              </Link>
+              <Link
                 href="/calendar"
                 className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 lg:py-3 glass glass-hover rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 sm:gap-2"
                 style={{ 
@@ -614,6 +635,9 @@ export default function HomePage() {
           todaysFocus={todaysFocus}
           onEditFocus={() => setIsEditFocusModalOpen(true)}
         />
+
+        {/* Inbox Quick Capture Card */}
+        <InboxCard />
 
         {/* Important Reminders Card */}
         <RemindersCard

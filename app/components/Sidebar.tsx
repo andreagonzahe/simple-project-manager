@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Focus, Grid3x3, FolderKanban, CheckSquare, Home, X, CheckCircle2, Heart } from 'lucide-react';
+import { Focus, Grid3x3, FolderKanban, CheckSquare, Home, X, CheckCircle2, Heart, Inbox, Network } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SidebarProps {
@@ -21,6 +21,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       description: 'Dashboard overview'
     },
     { 
+      name: 'Inbox', 
+      path: '/inbox', 
+      icon: Inbox,
+      description: 'Quick capture & organize'
+    },
+    { 
       name: 'Daily Flow', 
       path: '/daily-flow', 
       icon: Heart,
@@ -31,6 +37,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       path: '/focus', 
       icon: Focus,
       description: 'Today\'s must-do tasks'
+    },
+    { 
+      name: 'Map View', 
+      path: '/map', 
+      icon: Network,
+      description: 'Visual hierarchy'
     },
     { 
       name: 'Areas', 

@@ -17,6 +17,8 @@ export interface AreaOfLife {
   icon?: string;
   sort_order: number;
   goals?: string[];
+  map_x?: number;
+  map_y?: number;
   created_at: string;
   updated_at: string;
 }

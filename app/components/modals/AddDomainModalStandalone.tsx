@@ -75,17 +75,44 @@ export function AddDomainModalStandalone({ isOpen, onClose, onSuccess, preselect
     setError(null);
 
     try {
-      const { error: insertError } = await supabase
+      const insertData = {
+        area_id: formData.area_id,
+        name: formData.name,
+        description: formData.description || null,
+        color: formData.color,
+        status: formData.status,
+      };
+      
+      console.log('Attempting to insert project:', insertData);
+      
+      const { data, error: insertError } = await supabase
         .from('projects')
-        .insert([formData as any]);
+        .insert([insertData])
+        .select();
 
-      if (insertError) throw insertError;
+      console.log('Insert result:', { data, error: insertError });
+
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        console.error('Insert error details:', JSON.stringify({
+          message: insertError.message,
+          details: insertError.details,
+          hint: insertError.hint,
+          code: insertError.code
+        }, null, 2));
+        throw insertError;
+      }
 
       onSuccess();
       onClose();
       setFormData({ area_id: '', name: '', description: '', color: defaultColors[0], status: 'active' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create project');
+      console.error('Error creating project:', err);
+      console.error('Error details:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+      const errorMessage = err && typeof err === 'object' && 'message' in err 
+        ? (err as any).message 
+        : 'Failed to create project';
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

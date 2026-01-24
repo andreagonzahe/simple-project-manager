@@ -50,6 +50,8 @@ CREATE TABLE areas_of_life (
     icon TEXT,
     goals JSONB DEFAULT '[]'::jsonb,
     sort_order INTEGER NOT NULL DEFAULT 0,
+    map_x INTEGER,
+    map_y INTEGER,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
